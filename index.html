@@ -1,1 +1,1392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<title>LUMY-V</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#2563eb;--blue2:#1d4ed8;--blue-light:#dbeafe;--blue-glow:rgba(37,99,235,0.18);
+  --cyan:#06b6d4;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--violet:#8b5cf6;
+  --bg:#f0f4ff;--surface:#ffffff;--surface2:#f8faff;--border:#e2e8f8;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --header:72px;--radius:16px;--radius-lg:24px;--radius-xl:32px;
+  --shadow:0 1px 3px rgba(15,23,42,0.06),0 4px 16px rgba(37,99,235,0.08);
+  --shadow-lg:0 8px 32px rgba(37,99,235,0.12),0 2px 8px rgba(15,23,42,0.06);
+  --sidebar-w:300px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overscroll-behavior:none;}
 
+/* ── HEADER ── */
+header{
+  height:var(--header);
+  background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e40af 100%);
+  padding:0 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;gap:12px;
+  box-shadow:0 4px 24px rgba(37,99,235,0.3);
+}
+header::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.hd-logo{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
+.logo-badge{width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,0.4);}
+.hd-brand-name{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;letter-spacing:2px;line-height:1;}
+.hd-brand-sub{font-size:0.5rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:3px;}
+.hd-right{display:flex;align-items:center;gap:8px;position:relative;z-index:1;}
+.sync-pill{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;font-size:0.62rem;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all 0.3s;font-weight:500;}
+.sync-pill.ok{color:#34d399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);}
+.sync-pill.syncing{color:#fbbf24;border-color:rgba(251,191,36,0.3);}
+.online-dot{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399;animation:pulse 2s infinite;flex-shrink:0;}
+.hd-clock{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:5px 12px;text-align:right;}
+#clock{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;line-height:1;}
+#dateLabel{font-size:0.52rem;color:rgba(255,255,255,0.45);margin-top:2px;letter-spacing:0.5px;}
+
+/* ── HAMBURGER ── */
+.hd-menu-btn{width:44px;height:44px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all 0.2s;position:relative;z-index:1;flex-shrink:0;}
+.hd-menu-btn:hover{background:rgba(255,255,255,0.14);}
+.hd-menu-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
+.hd-menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hd-menu-btn.open span:nth-child(2){opacity:0;}
+.hd-menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* ── SIDEBAR ── */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px);}
+.sidebar-overlay.show{opacity:1;pointer-events:all;}
+.sidebar{position:fixed;top:0;right:0;width:var(--sidebar-w);max-width:90vw;height:100%;background:linear-gradient(160deg,#0f172a 0%,#1e3a5f 60%,#1e1b4b 100%);z-index:200;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,0.4);}
+.sidebar.open{transform:translateX(0);}
+.sidebar-header{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:3px;color:#fff;}
+.sidebar-sub{font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:4px;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:16px 0;}
+.sidebar-section-label{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:16px 24px 8px;font-weight:700;}
+.sidebar-item{display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;transition:all 0.2s;border:none;background:none;width:100%;text-align:left;position:relative;overflow:hidden;}
+.sidebar-item::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.04);opacity:0;transition:opacity 0.2s;}
+.sidebar-item:hover::before{opacity:1;}
+.sidebar-item:active{transform:scale(0.98);}
+.sidebar-item-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.sidebar-item-icon.blue{background:linear-gradient(135deg,rgba(37,99,235,0.3),rgba(37,99,235,0.15));border:1px solid rgba(37,99,235,0.3);}
+.sidebar-item-icon.emerald{background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(16,185,129,0.12));border:1px solid rgba(16,185,129,0.25);}
+.sidebar-item-icon.amber{background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(245,158,11,0.12));border:1px solid rgba(245,158,11,0.25);}
+.sidebar-item-icon.violet{background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(139,92,246,0.12));border:1px solid rgba(139,92,246,0.25);}
+.sidebar-item-icon.rose{background:linear-gradient(135deg,rgba(244,63,94,0.2),rgba(244,63,94,0.08));border:1px solid rgba(244,63,94,0.2);}
+.sidebar-item-text{flex:1;}
+.sidebar-item-title{font-size:0.88rem;font-weight:600;color:#fff;line-height:1.2;}
+.sidebar-item-desc{font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:3px;}
+.sidebar-arrow{font-size:0.75rem;color:rgba(255,255,255,0.2);}
+.sidebar-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 24px;}
+.sidebar-footer{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.08);}
+.sidebar-version{font-size:0.6rem;color:rgba(255,255,255,0.2);letter-spacing:1px;}
+
+/* ── CONTAINER ── */
+.container{max-width:880px;margin:0 auto;padding:20px 14px 48px;}
+
+/* ── FLASH ── */
+#flash{border-radius:var(--radius);padding:13px 16px;margin-bottom:16px;font-size:0.85rem;font-weight:600;display:none;animation:slideDown 0.3s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+#flash.entry{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);color:#059669;}
+#flash.exit{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);color:#d97706;}
+#flash.error{background:linear-gradient(135deg,rgba(244,63,94,0.1),rgba(244,63,94,0.05));border:1px solid rgba(244,63,94,0.3);color:#e11d48;}
+
+/* ── SECTION HEADERS ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.section-title{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px;}
+.badge{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-size:0.65rem;padding:2px 10px;border-radius:20px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;}
+
+/* ── TARIFF INFO CARD (main page, no edit) ── */
+.tariff-info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.tariff-info-inner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.tariff-info-icon{width:36px;height:36px;background:linear-gradient(135deg,#dbeafe,#ede9fe);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.tariff-info-text{font-size:0.78rem;color:var(--text2);line-height:1.7;flex:1;}
+.tariff-info-text strong{color:var(--text);font-weight:700;}
+.tariff-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(37,99,235,0.07);border:1px solid rgba(37,99,235,0.15);border-radius:20px;padding:2px 9px;font-size:0.67rem;font-weight:700;color:var(--blue);margin:1px;}
+
+/* ── SCANNER CARD ── */
+.scanner-card{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-radius:var(--radius-xl);padding:24px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.scanner-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(37,99,235,0.3),transparent 70%);pointer-events:none;}
+.scanner-card::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(124,58,237,0.2),transparent 70%);pointer-events:none;}
+.scanner-inner{display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;z-index:1;}
+.scanner-label{font-family:'Syne',sans-serif;font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);align-self:flex-start;}
+#reader{border-radius:16px;overflow:hidden;width:100%;max-width:280px;border:2px solid rgba(37,99,235,0.4);}
+.scanner-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(37,99,235,0.4);}
+.btn-primary:active{opacity:0.85;transform:scale(0.98);}
+.btn-stop{background:rgba(244,63,94,0.1);color:#f43f5e;border:1.5px solid rgba(244,63,94,0.3);padding:12px 24px;border-radius:12px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;}
+.manual-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);}
+.manual-lbl{font-size:0.7rem;color:rgba(255,255,255,0.4);font-weight:500;}
+.manual-input{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);color:#fff;padding:10px 14px;border-radius:10px;font-size:0.95rem;font-family:'Plus Jakarta Sans',sans-serif;width:110px;text-align:center;font-weight:600;}
+.manual-input:focus{outline:none;border-color:rgba(37,99,235,0.6);background:rgba(37,99,235,0.12);}
+.manual-input::placeholder{color:rgba(255,255,255,0.25);}
+.btn-register{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.18);padding:10px 18px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-register:hover{background:rgba(37,99,235,0.3);border-color:rgba(37,99,235,0.5);}
+
+/* ── SUMMARY ── */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-1px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.stat-card.violet::before{background:linear-gradient(90deg,var(--violet),#ec4899);}
+.stat-card.emerald::before{background:linear-gradient(90deg,var(--emerald),var(--cyan));}
+.stat-card.amber::before{background:linear-gradient(90deg,var(--amber),#f97316);}
+.stat-val{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;line-height:1;margin-bottom:4px;}
+.stat-card.blue .stat-val{color:var(--blue);}
+.stat-card.violet .stat-val{color:var(--violet);}
+.stat-card.emerald .stat-val{color:var(--emerald);}
+.stat-card.amber .stat-val{color:var(--amber);}
+.stat-lbl{font-size:0.58rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+.income-locked{cursor:pointer;position:relative;}
+#incomeLockBtn{position:absolute;top:8px;right:8px;background:none;border:none;font-size:0.85rem;cursor:pointer;color:var(--text3);line-height:1;display:none;padding:2px;}
+
+/* ── ACTIVE VEHICLES ── */
+.spots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:24px;}
+.spot-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow);transition:all 0.2s;}
+.spot-card:hover{border-color:rgba(37,99,235,0.3);box-shadow:var(--shadow-lg);}
+.spot-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(37,99,235,0.06),transparent 70%);pointer-events:none;}
+.spot-num{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;color:var(--blue);line-height:1;}
+.spot-type-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:0.62rem;font-weight:700;margin:5px 0;letter-spacing:0.5px;}
+.spot-type-badge.auto{background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.2);}
+.spot-type-badge.moto{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+.spot-time{font-size:0.65rem;color:var(--text3);font-weight:500;}
+.spot-elapsed{font-size:0.78rem;color:var(--text2);font-weight:600;margin-top:2px;}
+.spot-est{font-size:0.78rem;color:var(--blue);font-weight:700;margin-top:6px;}
+.spot-billing-note{font-size:0.6rem;color:var(--text3);margin-top:2px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);position:absolute;top:12px;right:12px;box-shadow:0 0 0 2px rgba(16,185,129,0.2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:0.3;display:block;}
+.empty-text{font-size:0.82rem;font-weight:500;}
+
+/* ── HISTORY TABLE ── */
+.history-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+thead{background:linear-gradient(135deg,#f8faff,#f0f4ff);}
+th{padding:12px 14px;font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);text-align:left;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;font-size:0.78rem;border-bottom:1px solid #f1f5f9;vertical-align:middle;color:var(--text2);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(37,99,235,0.02);}
+.ficha-num{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:var(--blue);}
+.total-chip{font-weight:700;color:var(--emerald);display:flex;align-items:center;gap:5px;}
+.paid-badge{background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.2);padding:2px 7px;border-radius:20px;font-size:0.6rem;font-weight:700;}
+
+/* ── TICKET SCREENS ── */
+.ticket-screen{display:none;position:fixed;inset:0;z-index:250;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.ticket-screen.show{display:flex;}
+.entry-screen{background:linear-gradient(160deg,#0f172a 0%,#064e3b 50%,#065f46 100%);}
+.exit-screen{background:linear-gradient(160deg,#0f172a 0%,#1e3a5f 50%,#1e1b4b 100%);}
+.ticket-glow{position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(60px);top:5%;left:50%;transform:translateX(-50%);pointer-events:none;}
+.entry-screen .ticket-glow{background:rgba(16,185,129,0.12);}
+.exit-screen .ticket-glow{background:rgba(37,99,235,0.12);}
+.ticket-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:28px 24px;width:100%;max-width:340px;text-align:center;backdrop-filter:blur(20px);animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+@keyframes popIn{from{opacity:0;transform:scale(0.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.ticket-logo{width:50px;height:50px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.4rem;}
+.ticket-brand{font-family:'Syne',sans-serif;font-size:0.6rem;letter-spacing:4px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:10px;}
+.ticket-status-pill{display:inline-block;padding:5px 14px;border-radius:30px;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:18px;}
+.entry-screen .ticket-status-pill{background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(52,211,153,0.25);}
+.exit-screen .ticket-status-pill{background:rgba(37,99,235,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);}
+.ticket-ficha-label{font-size:0.55rem;color:rgba(255,255,255,0.35);letter-spacing:3px;text-transform:uppercase;}
+.ticket-ficha{font-family:'Syne',sans-serif;font-size:5rem;font-weight:800;line-height:1;margin:2px 0 6px;}
+.entry-screen .ticket-ficha{color:#34d399;}
+.exit-screen .ticket-ficha{color:#60a5fa;}
+.ticket-div{border:none;border-top:1px dashed rgba(255,255,255,0.1);margin:16px 0;}
+.ticket-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ticket-row-label{font-size:0.68rem;color:rgba(255,255,255,0.4);font-weight:500;}
+.ticket-row-val{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.9);}
+.ticket-total-block{margin-top:16px;padding:16px;border-radius:14px;}
+.exit-screen .ticket-total-block{background:rgba(37,99,235,0.1);border:1px solid rgba(96,165,250,0.2);}
+.ticket-total-label{font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:6px;}
+.ticket-total-amt{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;color:#60a5fa;line-height:1;}
+.ticket-total-sub{font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:6px;}
+.ticket-welcome{margin-top:16px;padding:12px;border-radius:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(52,211,153,0.18);}
+.ticket-welcome-txt{font-size:0.85rem;color:#34d399;font-weight:600;}
+.ticket-welcome-sub{font-size:0.65rem;color:rgba(255,255,255,0.35);margin-top:3px;}
+.ticket-back-btn{margin-top:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:12px 36px;border-radius:50px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
+.ticket-back-btn:active{background:rgba(255,255,255,0.12);}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.75);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;max-width:480px;width:100%;animation:popIn 0.3s ease;box-shadow:0 32px 80px rgba(15,23,42,0.2);}
+.modal-icon{font-size:2.5rem;text-align:center;margin-bottom:10px;}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.modal-date{font-size:0.72rem;color:var(--text3);margin-bottom:18px;font-weight:500;}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.modal-stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
+.modal-stat .mval{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);}
+.modal-stat .mlbl{font-size:0.62rem;color:var(--text3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.modal-stat.highlight .mval{color:var(--emerald);}
+.modal-stat.highlight{border-color:rgba(16,185,129,0.25);}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.modal-note{font-size:0.78rem;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.modal-note span{color:var(--amber);font-weight:600;}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-modal-cancel{background:var(--bg);color:var(--text2);border:1.5px solid var(--border);padding:10px 18px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;}
+.btn-modal-danger{background:linear-gradient(135deg,var(--rose),#e11d48);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-modal-confirm{background:linear-gradient(135deg,var(--emerald),#059669);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:700;letter-spacing:0.5px;cursor:pointer;}
+
+/* ── PASSWORD MODAL ── */
+.pw-modal{max-width:340px;}
+.pw-modal h2{color:var(--violet);}
+.pw-input{background:var(--bg);border:1.5px solid var(--border);color:var(--text);padding:13px 16px;border-radius:12px;font-size:1rem;font-family:'Plus Jakarta Sans',sans-serif;width:100%;margin:14px 0;font-weight:500;}
+.pw-input:focus{outline:none;border-color:var(--blue);}
+.pw-error{color:var(--rose);font-size:0.75rem;margin-top:-8px;margin-bottom:12px;display:none;font-weight:600;}
+.btn-pw-enter{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:11px 22px;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+
+/* ── VTYPE MODAL ── */
+.vtype-modal{max-width:340px;}
+.vtype-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.vtype-btn{border:2px solid var(--border);background:var(--bg);border-radius:var(--radius);padding:20px 10px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.vtype-btn .vtype-icon{font-size:2.4rem;display:block;margin-bottom:8px;}
+.vtype-btn .vtype-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);}
+.vtype-btn .vtype-rate{font-size:0.65rem;color:var(--text3);margin-top:4px;font-weight:600;line-height:1.5;}
+.vtype-btn.auto-btn:hover{border-color:var(--emerald);background:rgba(16,185,129,0.05);}
+.vtype-btn.moto-btn:hover{border-color:var(--amber);background:rgba(245,158,11,0.05);}
+
+/* ── EXIT CONFIRM ── */
+.exit-confirm-modal{max-width:320px;text-align:center;}
+
+/* ── REPORTS MODAL ── */
+.report-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.report-item-date{font-weight:700;font-size:0.8rem;color:var(--text);}
+.report-item-stats{display:flex;gap:12px;font-size:0.72rem;color:var(--text3);flex-wrap:wrap;}
+.report-item-stats strong{color:var(--emerald);font-weight:700;}
+
+/* ── INCOME MODAL ── */
+.income-modal{max-width:300px;text-align:center;}
+.income-big{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;color:var(--emerald);margin:16px 0 4px;}
+.income-sub{font-size:0.72rem;color:var(--text3);margin-bottom:20px;font-weight:500;}
+
+/* ── SIDEBAR RATES FORM ── */
+.sidebar-rates-form{padding:0 0 16px;}
+.srf-field{margin-bottom:14px;}
+.srf-label{font-size:0.68rem;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase;}
+.srf-input{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);color:#fff;padding:10px 14px;border-radius:10px;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;width:100%;font-weight:600;}
+.srf-input:focus{outline:none;border-color:rgba(37,99,235,0.6);}
+.srf-note{font-size:0.65rem;color:rgba(255,255,255,0.3);margin-top:5px;line-height:1.5;}
+.btn-srf-save{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;width:100%;margin-top:4px;}
+.btn-srf-cancel{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);padding:10px 24px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;width:100%;margin-top:8px;}
+
+/* ── TRUST DEVICE SIDEBAR PANEL ── */
+.trust-panel{padding:0;}
+.trust-status-block{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;}
+.trust-status-icon{font-size:2.5rem;margin-bottom:8px;}
+.trust-status-text{font-size:0.85rem;font-weight:600;color:#fff;}
+.trust-status-sub{font-size:0.65rem;color:rgba(255,255,255,0.35);margin-top:4px;}
+.btn-trust-action{padding:12px 24px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;width:100%;border:none;margin-bottom:8px;}
+.btn-trust-mark{background:linear-gradient(135deg,var(--emerald),#059669);color:#fff;}
+.btn-trust-remove{background:rgba(244,63,94,0.12);color:#f43f5e;border:1.5px solid rgba(244,63,94,0.3)!important;}
+
+/* ── LOADING OVERLAY ── */
+#loadingOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#1e3a5f);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loading-logo{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;letter-spacing:4px;color:#fff;}
+.loading-sub{font-size:0.65rem;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;}
+.loading-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e1b4b 100%);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:24px;}
+#loginScreen.hidden{display:none;}
+#loginScreen::before{content:'';position:absolute;top:20%;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,0.15),transparent 70%);pointer-events:none;}
+.login-brand{text-align:center;position:relative;z-index:1;}
+.login-logo{font-family:'Syne',sans-serif;font-size:3.2rem;font-weight:800;letter-spacing:5px;background:linear-gradient(135deg,#60a5fa,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.login-tagline{font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:6px;}
+.login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-xl);padding:28px;width:100%;max-width:340px;backdrop-filter:blur(20px);position:relative;z-index:1;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+.login-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.8);text-align:center;margin-bottom:18px;}
+.login-input{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);color:#fff;padding:14px 16px;border-radius:12px;font-size:1rem;font-family:'Plus Jakarta Sans',sans-serif;width:100%;margin-bottom:10px;font-weight:500;}
+.login-input:focus{outline:none;border-color:rgba(37,99,235,0.6);background:rgba(37,99,235,0.1);}
+.login-input::placeholder{color:rgba(255,255,255,0.25);}
+.login-error{color:#f87171;font-size:0.75rem;text-align:center;margin-bottom:10px;display:none;font-weight:500;}
+.login-btn{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:2px;cursor:pointer;width:100%;transition:all 0.2s;box-shadow:0 4px 20px rgba(37,99,235,0.4);}
+.login-btn:active{transform:scale(0.98);opacity:0.9;}
+
+@media(max-width:520px){
+  .summary{grid-template-columns:repeat(2,1fr);}
+  .hd-brand-name{font-size:1.15rem;}
+  th,td{padding:9px 10px;font-size:0.72rem;}
+  .ticket-ficha{font-size:4rem;}
+  .ticket-total-amt{font-size:2.8rem;}
+  .sync-pill{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-brand">
+    <div class="login-logo">LUMY‑V</div>
+    <div class="login-tagline">Sistema de Estacionamiento</div>
+  </div>
+  <div class="login-card">
+    <h3>🔐 Acceso</h3>
+    <input type="password" id="loginInput" class="login-input" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="loginError">Contraseña incorrecta. Intenta de nuevo.</div>
+    <button class="login-btn" onclick="doLogin()">ENTRAR</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loadingOverlay">
+  <div class="loading-logo">LUMY‑V</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-sub">Conectando...</div>
+</div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">LUMY‑V</div>
+    <div class="sidebar-sub">Panel de administración</div>
+  </div>
+  <div class="sidebar-nav" id="sidebarNav">
+    <!-- Main menu -->
+    <div id="sidebarMain">
+      <div class="sidebar-section-label">General</div>
+      <button class="sidebar-item" onclick="sidebarGo('income')">
+        <div class="sidebar-item-icon amber">💰</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Cobrado hoy</div>
+          <div class="sidebar-item-desc">Ver ingresos del día</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label">Configuración</div>
+      <button class="sidebar-item" onclick="sidebarGo('rates')">
+        <div class="sidebar-item-icon blue">⚙️</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Modificar tarifas</div>
+          <div class="sidebar-item-desc">Precios y horarios</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <button class="sidebar-item" onclick="sidebarGo('trust')">
+        <div class="sidebar-item-icon violet">📱</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Dispositivo de confianza</div>
+          <div class="sidebar-item-desc">Omitir contraseña al entrar</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label">Reportes</div>
+      <button class="sidebar-item" onclick="sidebarGo('reports')">
+        <div class="sidebar-item-icon emerald">📁</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Días previos</div>
+          <div class="sidebar-item-desc">Historial de cierres</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <button class="sidebar-item" onclick="sidebarGo('closeday')">
+        <div class="sidebar-item-icon rose">🔒</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Cerrar día</div>
+          <div class="sidebar-item-desc">Guardar y reiniciar</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+    </div>
+
+    <!-- Rates sub-panel -->
+    <div id="sidebarRates" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px;">Tarifas</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:18px;line-height:1.6;">Las reglas de cobro especiales están fijas en el sistema y no se pueden cambiar.</div>
+      <div class="sidebar-rates-form">
+        <div class="srf-field">
+          <label class="srf-label">🚗 Tarifa Auto / hora ($)</label>
+          <input type="number" id="srfRateAuto" class="srf-input" value="20" min="1">
+          <div class="srf-note">• 3ª hora GRATIS · Máx $80 en 5h<br>• Cobro en medias horas completas</div>
+        </div>
+        <div class="srf-field">
+          <label class="srf-label">🏍️ Moto/Mototaxi (tarifa nocturna $ / hora extra)</label>
+          <input type="number" id="srfRateMoto" class="srf-input" value="10" min="1">
+          <div class="srf-note">• 8am–5pm = $20 fijo<br>• Después de 5pm = $10/hr extra<br>• Cobro en medias horas completas</div>
+        </div>
+        <button class="btn-srf-save" onclick="saveSidebarRates()">✓ Guardar tarifas</button>
+        <button class="btn-srf-cancel" onclick="sidebarBack()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Trust sub-panel -->
+    <div id="sidebarTrust" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px;">Dispositivo de confianza</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:18px;line-height:1.6;">Un dispositivo de confianza no pedirá contraseña al abrir la app.</div>
+      <div class="trust-panel">
+        <div class="trust-status-block">
+          <div class="trust-status-icon" id="sbTrustIcon">📱</div>
+          <div class="trust-status-text" id="sbTrustText">No es de confianza</div>
+          <div class="trust-status-sub" id="sbTrustSub">Se pedirá contraseña cada vez que abras la app</div>
+        </div>
+        <button class="btn-trust-action btn-trust-mark" id="sbTrustBtn" onclick="handleTrust()">🔒 Marcar como confianza</button>
+      </div>
+    </div>
+
+    <!-- Reports sub-panel -->
+    <div id="sidebarReports" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px;">Días previos</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:14px;">Historial de cierres de día.</div>
+      <div id="sbReportsList" style="max-height:60vh;overflow-y:auto;"></div>
+    </div>
+
+    <!-- Income sub-panel -->
+    <div id="sidebarIncome" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff;margin-bottom:4px;">Cobrado hoy</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:18px;">Ingresos del día en curso.</div>
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:24px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Total cobrado</div>
+        <div id="sbIncomeAmt" style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:#34d399;">$0</div>
+        <div id="sbIncomeSub" style="font-size:0.68rem;color:rgba(255,255,255,0.3);margin-top:6px;">0 salidas registradas</div>
+      </div>
+      <div id="sbIncomeBreakdown" style="font-size:0.72rem;color:rgba(255,255,255,0.4);line-height:1.8;"></div>
+    </div>
+
+  </div><!-- end sidebar-nav -->
+  <div class="sidebar-footer">
+    <div class="sidebar-version">LUMY‑V · v2.0 · Sistema de Estacionamiento</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="hd-logo">
+    <div class="logo-badge">
+      <svg viewBox="0 0 120 80" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,68 A52,52 0 0,1 12,12" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <line x1="7" y1="20" x2="16" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="5" y1="28" x2="14" y2="29" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="4" y1="36" x2="13" y2="36" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="4" y1="44" x2="13" y2="43" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="6" y1="52" x2="15" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <text x="28" y="38" font-family="Georgia,serif" font-weight="900" font-size="18" fill="#fff" letter-spacing="1">LUMY</text>
+        <line x1="78" y1="34" x2="84" y2="34" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+        <text x="86" y="38" font-family="Georgia,serif" font-weight="900" font-size="18" fill="#fff">V</text>
+        <path d="M48,44 Q54,38 62,38 Q70,38 76,44 L78,44 L78,50 L44,50 L44,44 Z" fill="rgba(255,255,255,0.7)"/>
+        <ellipse cx="50" cy="50" rx="4" ry="3" fill="rgba(255,255,255,0.4)"/>
+        <ellipse cx="72" cy="50" rx="4" ry="3" fill="rgba(255,255,255,0.4)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="hd-brand-name">LUMY‑V</div>
+      <div class="hd-brand-sub">Estacionamiento</div>
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="sync-pill" id="syncPill">☁️ Conectando</div>
+    <div class="sync-pill ok" style="gap:6px;"><div class="online-dot"></div>En línea</div>
+    <div class="hd-clock">
+      <div id="clock">00:00</div>
+      <div id="dateLabel">—</div>
+    </div>
+    <button class="hd-menu-btn" id="menuBtn" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div id="flash"></div>
+
+  <!-- Tariff Info (read-only, compact) -->
+  <div class="tariff-info-card">
+    <div class="tariff-info-inner">
+      <div class="tariff-info-icon">💡</div>
+      <div class="tariff-info-text">
+        <span class="tariff-pill">🚗 Auto $<span id="rateAutoDisplay">20</span>/hr</span>
+        <span class="tariff-pill">· 3ª hora gratis</span>
+        <span class="tariff-pill">· Máx $80</span>
+        <span class="tariff-pill">🏍️ 8am‑5pm $20 fijo</span>
+        <span class="tariff-pill">Después $<span id="rateMotoDisplay">10</span>/hr</span>
+        <span class="tariff-pill">· Cobro ½ hora completa</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scanner -->
+  <div class="scanner-card">
+    <div class="scanner-inner">
+      <div class="scanner-label">📷 Escanear ficha QR o placa</div>
+      <div id="reader"></div>
+      <div class="scanner-btns">
+        <button class="btn-primary" id="startBtn" onclick="startScanner()">INICIAR CÁMARA</button>
+        <button class="btn-stop" id="stopBtn" onclick="stopScanner()" style="display:none">⏹ Detener</button>
+      </div>
+      <div class="manual-row">
+        <span class="manual-lbl">O ingresa número de ficha:</span>
+        <input type="number" id="manualCode" class="manual-input" placeholder="100–220" min="100" max="220">
+        <button class="btn-register" onclick="processManual()">Registrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="summary">
+    <div class="stat-card blue"><div class="stat-val" id="sumActive">0</div><div class="stat-lbl">Activos</div></div>
+    <div class="stat-card violet"><div class="stat-val" id="sumEntries">0</div><div class="stat-lbl">Entradas hoy</div></div>
+    <div class="stat-card emerald"><div class="stat-val" id="sumToday">0</div><div class="stat-lbl">Salidas hoy</div></div>
+    <div class="stat-card amber income-locked" onclick="sidebarGo('income')">
+      <div class="stat-val" id="sumIncome">🔒</div>
+      <div class="stat-lbl">Cobrado hoy</div>
+    </div>
+  </div>
+
+  <!-- Active Vehicles -->
+  <div class="section-head">
+    <div class="section-title">🚗 Vehículos activos <span class="badge" id="activeCount">0</span></div>
+  </div>
+  <div class="spots-grid" id="spotsGrid">
+    <div class="empty-state" style="grid-column:1/-1">
+      <span class="empty-icon">🅿️</span>
+      <div class="empty-text">Sin vehículos activos</div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="section-head">
+    <div class="section-title">📋 Historial de hoy</div>
+  </div>
+  <div class="history-wrap">
+    <table>
+      <thead><tr><th>Ficha</th><th>Tipo</th><th>Entrada</th><th>Salida</th><th>Tiempo</th><th>Total</th></tr></thead>
+      <tbody id="histBody">
+        <tr><td colspan="6"><div class="empty-state"><span class="empty-icon">📋</span><div class="empty-text">Sin registros aún</div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Entry Ticket -->
+<div class="ticket-screen entry-screen" id="entryScreen">
+  <div class="ticket-glow"></div>
+  <div class="ticket-card">
+    <div class="ticket-logo">🅿️</div>
+    <div class="ticket-brand">LUMY‑V ESTACIONAMIENTO</div>
+    <div class="ticket-status-pill">✓ ENTRADA REGISTRADA</div>
+    <div class="ticket-ficha-label">FICHA</div>
+    <div class="ticket-ficha" id="et-ficha">—</div>
+    <hr class="ticket-div">
+    <div class="ticket-row"><span class="ticket-row-label">🚘 Tipo</span><span class="ticket-row-val" id="et-tipo">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">📅 Fecha</span><span class="ticket-row-val" id="et-fecha">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕐 Entrada</span><span class="ticket-row-val" id="et-hora">—</span></div>
+    <div class="ticket-welcome">
+      <div class="ticket-welcome-txt">¡Bienvenido! 👋</div>
+      <div class="ticket-welcome-sub">Conserve su ficha para la salida</div>
+    </div>
+  </div>
+  <button class="ticket-back-btn" onclick="closeTicket('entry')">← Volver</button>
+</div>
+
+<!-- Exit Ticket -->
+<div class="ticket-screen exit-screen" id="exitScreen">
+  <div class="ticket-glow"></div>
+  <div class="ticket-card">
+    <div class="ticket-logo">🏁</div>
+    <div class="ticket-brand">LUMY‑V ESTACIONAMIENTO</div>
+    <div class="ticket-status-pill">COBRO DE SERVICIO</div>
+    <div class="ticket-ficha-label">FICHA</div>
+    <div class="ticket-ficha" id="xt-ficha">—</div>
+    <hr class="ticket-div">
+    <div class="ticket-row"><span class="ticket-row-label">🚘 Tipo</span><span class="ticket-row-val" id="xt-tipo">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕐 Entrada</span><span class="ticket-row-val" id="xt-entrada">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕓 Salida</span><span class="ticket-row-val" id="xt-salida">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">⏱ Tiempo</span><span class="ticket-row-val" id="xt-tiempo">—</span></div>
+    <div class="ticket-total-block">
+      <div class="ticket-total-label">Total a pagar</div>
+      <div class="ticket-total-amt" id="xt-total">$0</div>
+      <div class="ticket-total-sub" id="xt-sub">—</div>
+    </div>
+  </div>
+  <button class="ticket-back-btn" onclick="closeTicket('exit')">← Volver</button>
+</div>
+
+<!-- Close Day Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon">🔒</div>
+    <h2>Cierre del Día</h2>
+    <div class="modal-date" id="modalDate"></div>
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="mval" id="mEntries">0</div><div class="mlbl">Entraron</div></div>
+      <div class="modal-stat"><div class="mval" id="mExits">0</div><div class="mlbl">Salieron</div></div>
+      <div class="modal-stat"><div class="mval" id="mActive">0</div><div class="mlbl">Adentro</div></div>
+      <div class="modal-stat highlight"><div class="mval" id="mIncome">$0</div><div class="mlbl">Cobrado</div></div>
+    </div>
+    <hr class="modal-divider">
+    <div class="modal-note" id="mNote"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-modal-danger" onclick="confirmCloseDay()">✓ Confirmar cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="pwOverlay">
+  <div class="modal pw-modal">
+    <div class="modal-icon">🔑</div>
+    <h2>Contraseña</h2>
+    <p style="font-size:0.75rem;color:var(--text3);margin-top:2px;font-weight:500;">Solo el administrador puede continuar.</p>
+    <input type="password" id="pwInput" class="pw-input" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')checkPassword()">
+    <div class="pw-error" id="pwError">Contraseña incorrecta.</div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closePwModal()">Cancelar</button>
+      <button class="btn-pw-enter" onclick="checkPassword()">Entrar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vehicle Type Modal -->
+<div class="modal-overlay" id="vtypeOverlay">
+  <div class="modal vtype-modal">
+    <div class="modal-icon">🚘</div>
+    <h2>Tipo de Vehículo</h2>
+    <p style="font-size:0.75rem;color:var(--text3);margin-top:2px;font-weight:500;">Ficha <strong id="vtypeCode" style="color:var(--blue);">—</strong></p>
+    <div class="vtype-btns">
+      <div class="vtype-btn auto-btn" onclick="confirmVtype('auto')">
+        <span class="vtype-icon">🚗</span>
+        <div class="vtype-name">Auto</div>
+        <div class="vtype-rate">$<span id="vtypeRateAuto">20</span>/hr<br><small>3ª hr gratis · máx $80</small></div>
+      </div>
+      <div class="vtype-btn moto-btn" onclick="confirmVtype('moto')">
+        <span class="vtype-icon">🏍️</span>
+        <div class="vtype-name">Moto / Mototaxi</div>
+        <div class="vtype-rate">8am‑5pm: $20 fijo<br>Después: $<span id="vtypeRateMoto">10</span>/hr extra</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeVtypeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exit Confirm Modal -->
+<div class="modal-overlay" id="exitConfirmOverlay">
+  <div class="modal exit-confirm-modal">
+    <div class="modal-icon">🏁</div>
+    <h2 style="font-size:1.2rem;">¿Confirmar salida?</h2>
+    <p style="font-size:0.82rem;color:var(--text3);margin:8px 0 4px;font-weight:600;">Ficha <strong id="exitConfirmCode" style="color:var(--blue);font-size:1.1rem;">—</strong></p>
+    <p style="font-size:0.75rem;color:var(--text3);margin-bottom:20px;font-weight:500;" id="exitConfirmInfo">—</p>
+    <div class="modal-actions" style="justify-content:center;gap:12px;">
+      <button class="btn-modal-cancel" onclick="closeExitConfirm()">✕ No</button>
+      <button class="btn-modal-confirm" onclick="confirmExit()">✓ Sí, marcar salida</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyDuw1RYWsjWvNLbCc8LbsTZP6Ebo5tKvPE",
+  authDomain:"base1estacionamiento.firebaseapp.com",
+  projectId:"base1estacionamiento",
+  storageBucket:"base1estacionamiento.firebasestorage.app",
+  messagingSenderId:"423755890406",
+  appId:"1:423755890406:web:3dea7bc9372a6655728527"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const PASSWORD = 'lumy1E';
+const TODAY = new Date().toISOString().slice(0,10);
+const stateRef = doc(db,'lumy','state');
+const configRef = doc(db,'lumy','config');
+
+let active={}, history=[], totalEntries=0, reports=[];
+let configRateAuto=20, configRateMoto=10;
+let scanner=null, lastScanned=null, lastScannedTime=0;
+let pwPurpose='sidebar', pendingCode=null, pendingPlate=null, pendingExitCode=null;
+let pendingSidebarPanel=null;
+
+// ══════════════════════════════════════════════
+//  BILLING LOGIC
+// ══════════════════════════════════════════════
+
+// Redondeo con gracia de 10 minutos:
+// Si los minutos sobrantes en el bloque de ½h son < 10 → no se cobra ese bloque
+// Si son >= 10 → se cobra la ½h completa
+function roundHalfHoursWithGrace(totalMs) {
+  const totalMins = totalMs / 60000;
+  const fullHalfHours = Math.floor(totalMins / 30); // bloques completos de 30 min
+  const remainder = totalMins - fullHalfHours * 30;  // minutos sobrantes
+  return remainder >= 10 ? fullHalfHours + 1 : fullHalfHours;
+}
+
+/**
+ * AUTO billing rules:
+ * - Redondeo con gracia de 5 min a la media hora
+ * - 3ª hora es GRATIS (bloques 5 y 6, de 2h–3h)
+ * - Máximo $80 total (10+ bloques de ½h)
+ */
+function calcBillAuto(elapsedMs) {
+  const rate = configRateAuto;
+  const halfRate = rate / 2;
+
+  const halfHoursCharged = roundHalfHoursWithGrace(elapsedMs);
+  if (halfHoursCharged === 0) return 0;
+
+  // Si son 5h o más (10 bloques) → $80 fijo
+  if (halfHoursCharged >= 10) return 80;
+
+  let total = 0;
+  for (let block = 1; block <= halfHoursCharged; block++) {
+    // Bloques 5 y 6 (2h–3h) son gratis
+    if (block === 5 || block === 6) continue;
+    total += halfRate;
+  }
+  return Math.min(Math.round(total), 80);
+}
+
+/**
+ * MOTO billing rules:
+ * - Si toda la estancia es dentro de 8am–5pm → $20 fijo
+ * - Si hay tiempo fuera de 5pm → $20 base + horas extra (en medias horas completas)
+ * - "Horas extra" = tiempo transcurrido desde 5pm
+ * - Cobro en medias horas completas
+ */
+function calcBillMoto(elapsedMs, entryDate) {
+  const entry = new Date(entryDate);
+  const exit = new Date(entry.getTime() + elapsedMs);
+  const rate = configRateMoto;
+
+  // Límite de las 5pm del mismo día
+  const limit5pm = new Date(entry);
+  limit5pm.setHours(17, 0, 0, 0);
+
+  // Si la salida es antes o exactamente a las 5pm → $20 fijo
+  if (exit <= limit5pm) return 20;
+
+  // Si la entrada es antes de las 5pm, la hora extra empieza a las 5pm
+  const extraStart = entry < limit5pm ? limit5pm : entry;
+  const extraMs = exit - extraStart;
+
+  // Redondeo con gracia de 5 min (igual que autos)
+  const extraHalfHours = roundHalfHoursWithGrace(extraMs);
+  const extraCost = extraHalfHours * (rate / 2);
+
+  return Math.round(20 + extraCost);
+}
+
+function calcBill(elapsedMs, type, entryDate) {
+  if (type === 'moto') return calcBillMoto(elapsedMs, entryDate);
+  return calcBillAuto(elapsedMs);
+}
+
+function billingDescription(elapsedMs, type, entryDate) {
+  if (type === 'moto') {
+    const entry = new Date(entryDate);
+    const exit = new Date(entry.getTime() + elapsedMs);
+    const limit5pm = new Date(entry); limit5pm.setHours(17,0,0,0);
+    if (exit <= limit5pm) return 'Tarifa fija diurna (8am–5pm)';
+    const extraMs = exit - (entry < limit5pm ? limit5pm : entry);
+    const extraMins = Math.ceil(extraMs / 60000);
+    return `$20 base + ${Math.ceil(extraMins/30)} × ½hr extra ($${configRateMoto}/hr)`;
+  }
+  // Auto
+  const minsCeil = Math.max(Math.ceil(elapsedMs/60000),1);
+  const halfHours = Math.ceil(minsCeil/30);
+  const paidBlocks = Math.max(halfHours-2, 0) > 0 
+    ? Math.min(halfHours,10) - 2 - (halfHours>6?0:Math.max(halfHours-4,0))
+    : halfHours;
+  if (halfHours >= 10) return 'Tarifa máxima 5h ($80)';
+  const freeNote = halfHours > 4 ? ' · 3ª hora gratis' : '';
+  return `${halfHours} × ½hr${freeNote}`;
+}
+
+// ══════════════════════════════════════════════
+//  SYNC / SAVE / LOAD
+// ══════════════════════════════════════════════
+function setSyncStatus(s){
+  const p=document.getElementById('syncPill');
+  if(s==='syncing'){p.textContent='🔄 Guardando';p.className='sync-pill syncing';}
+  else{p.textContent='☁️ Sincronizado';p.className='sync-pill ok';}
+}
+
+async function saveState(){
+  setSyncStatus('syncing');
+  const activeSerial={};
+  for(let k in active) activeSerial[k]={...active[k],entry:active[k].entry instanceof Date?active[k].entry.toISOString():active[k].entry};
+  try{
+    await setDoc(stateRef,{date:TODAY,active:activeSerial,history,totalEntries,reports},{merge:false});
+    setSyncStatus('ok');
+  }catch(e){showFlash('⚠️ Error al guardar: '+e.message,'error');}
+}
+
+async function saveSidebarRates(){
+  const newAuto = parseFloat(document.getElementById('srfRateAuto').value)||20;
+  const newMoto = parseFloat(document.getElementById('srfRateMoto').value)||10;
+  configRateAuto = newAuto; configRateMoto = newMoto;
+  updateConfigDisplay();
+  try{
+    await setDoc(configRef,{configRateAuto,configRateMoto});
+    showFlash(`✅ Tarifas actualizadas · Auto $${configRateAuto}/hr · Moto extra $${configRateMoto}/hr`,'entry');
+    sidebarBack();
+  }catch(e){showFlash('Error guardando config','error');}
+}
+window.saveSidebarRates=saveSidebarRates;
+
+async function loadAll(){
+  try{
+    const cfgSnap=await getDoc(configRef);
+    if(cfgSnap.exists()){
+      const c=cfgSnap.data();
+      configRateAuto=c.configRateAuto||20;
+      configRateMoto=c.configRateMoto||10;
+      document.getElementById('srfRateAuto').value=configRateAuto;
+      document.getElementById('srfRateMoto').value=configRateMoto;
+      updateConfigDisplay();
+    }
+    const stSnap=await getDoc(stateRef);
+    if(stSnap.exists()){
+      const d=stSnap.data();
+      if(d.date&&d.date!==TODAY){
+        const rep={date:d.date,entries:d.totalEntries||0,exits:(d.history||[]).length,
+          income:(d.history||[]).reduce((s,r)=>s+parseFloat(r.total||0),0).toFixed(0),
+          pending:Object.keys(d.active||{}).length};
+        reports=d.reports||[]; reports.unshift(rep);
+        active={}; history=[]; totalEntries=0;
+        await saveState();
+      }else{
+        active=d.active||{};
+        for(let k in active) active[k].entry=new Date(active[k].entry);
+        history=d.history||[]; totalEntries=d.totalEntries||0; reports=d.reports||[];
+      }
+    }
+  }catch(e){showFlash('Error al conectar: '+e.message,'error');}
+  document.getElementById('loadingOverlay').style.display='none';
+  setSyncStatus('ok'); render();
+}
+
+onSnapshot(stateRef,snap=>{
+  if(!snap.exists()) return;
+  const d=snap.data();
+  if(d.date!==TODAY) return;
+  const ra=d.active||{};
+  for(let k in ra) ra[k].entry=new Date(ra[k].entry);
+  active=ra; history=d.history||[]; totalEntries=d.totalEntries||0; reports=d.reports||[];
+  render(); setSyncStatus('ok');
+});
+
+onSnapshot(configRef,snap=>{
+  if(!snap.exists()) return;
+  const c=snap.data();
+  configRateAuto=c.configRateAuto||20; configRateMoto=c.configRateMoto||10;
+  document.getElementById('srfRateAuto').value=configRateAuto;
+  document.getElementById('srfRateMoto').value=configRateMoto;
+  updateConfigDisplay();
+});
+
+// ══════════════════════════════════════════════
+//  SIDEBAR
+// ══════════════════════════════════════════════
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sidebarOverlay');
+  const btn=document.getElementById('menuBtn');
+  const isOpen=sb.classList.contains('open');
+  if(isOpen){ closeSidebar(); }
+  else{ sb.classList.add('open'); ov.classList.add('show'); btn.classList.add('open'); }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.getElementById('menuBtn').classList.remove('open');
+  sidebarBack();
+}
+window.toggleSidebar=toggleSidebar; window.closeSidebar=closeSidebar;
+
+function sidebarGo(panel){
+  // Close sidebar if tapping income from main screen (no sidebar open)
+  const sb=document.getElementById('sidebar');
+  if(!sb.classList.contains('open')){
+    // open sidebar first then show panel
+    sb.classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('show');
+    document.getElementById('menuBtn').classList.add('open');
+  }
+
+  // needs password?
+  const protectedPanels=['rates','trust','reports','closeday','income'];
+  if(protectedPanels.includes(panel)){
+    pendingSidebarPanel=panel;
+    askUnlock('sidebar');
+    return;
+  }
+  showSidebarPanel(panel);
+}
+function showSidebarPanel(panel){
+  // hide all sub-panels
+  ['sidebarMain','sidebarRates','sidebarTrust','sidebarReports','sidebarIncome'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  if(panel==='main'){
+    document.getElementById('sidebarMain').style.display='block';
+    return;
+  }
+  if(panel==='rates') document.getElementById('sidebarRates').style.display='block';
+  if(panel==='trust'){ updateSidebarTrustPanel(); document.getElementById('sidebarTrust').style.display='block'; }
+  if(panel==='reports'){ renderSidebarReports(); document.getElementById('sidebarReports').style.display='block'; }
+  if(panel==='income'){ renderSidebarIncome(); document.getElementById('sidebarIncome').style.display='block'; }
+  if(panel==='closeday'){ closeSidebar(); openCloseDayModal(); }
+}
+function sidebarBack(){
+  ['sidebarRates','sidebarTrust','sidebarReports','sidebarIncome'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  document.getElementById('sidebarMain').style.display='block';
+}
+window.sidebarGo=sidebarGo; window.sidebarBack=sidebarBack;
+
+function renderSidebarReports(){
+  const el=document.getElementById('sbReportsList');
+  if(reports.length===0){
+    el.innerHTML=`<div style="text-align:center;padding:30px 0;color:rgba(255,255,255,0.2);font-size:0.8rem;">Sin cierres anteriores</div>`;
+    return;
+  }
+  el.innerHTML=reports.map(r=>`
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:8px;">
+      <div style="font-size:0.82rem;font-weight:700;color:#fff;margin-bottom:6px;">📅 ${r.date}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:0.7rem;color:rgba(255,255,255,0.4);">
+        <span>Entradas: <strong style="color:rgba(255,255,255,0.7)">${r.entries}</strong></span>
+        <span>Salidas: <strong style="color:rgba(255,255,255,0.7)">${r.exits}</strong></span>
+        ${r.pending>0?`<span style="color:#fbbf24">Pendientes: <strong>${r.pending}</strong></span>`:''}
+        <span>Total: <strong style="color:#34d399">$${r.income}</strong></span>
+      </div>
+    </div>`).join('');
+}
+
+function renderSidebarIncome(){
+  const income=history.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  document.getElementById('sbIncomeAmt').textContent='$'+income.toFixed(0);
+  document.getElementById('sbIncomeSub').textContent=`${history.length} salida(s) registrada(s)`;
+  const autos=history.filter(r=>r.type!=='moto');
+  const motos=history.filter(r=>r.type==='moto');
+  const incAuto=autos.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  const incMoto=motos.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  document.getElementById('sbIncomeBreakdown').innerHTML=`
+    🚗 Autos: ${autos.length} · $${incAuto.toFixed(0)}<br>
+    🏍️ Motos: ${motos.length} · $${incMoto.toFixed(0)}
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  CLOCK
+// ══════════════════════════════════════════════
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dateLabel').textContent=n.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'});
+}
+setInterval(updateClock,1000); updateClock();
+
+function updateConfigDisplay(){
+  document.getElementById('rateAutoDisplay').textContent=configRateAuto;
+  document.getElementById('rateMotoDisplay').textContent=configRateMoto;
+  document.getElementById('vtypeRateAuto').textContent=configRateAuto;
+  document.getElementById('vtypeRateMoto').textContent=configRateMoto;
+}
+
+// ══════════════════════════════════════════════
+//  PASSWORD
+// ══════════════════════════════════════════════
+function askUnlock(purpose){
+  pwPurpose=purpose;
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').style.display='none';
+  document.getElementById('pwOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+function checkPassword(){
+  if(document.getElementById('pwInput').value===PASSWORD){
+    closePwModal();
+    if(pwPurpose==='sidebar'&&pendingSidebarPanel){ showSidebarPanel(pendingSidebarPanel); pendingSidebarPanel=null; }
+    else if(pwPurpose==='closeday') openCloseDayModal();
+  }else{
+    document.getElementById('pwError').style.display='block';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+function closePwModal(){document.getElementById('pwOverlay').classList.remove('show');}
+window.askUnlock=askUnlock; window.checkPassword=checkPassword; window.closePwModal=closePwModal;
+
+// ══════════════════════════════════════════════
+//  TRUST DEVICE
+// ══════════════════════════════════════════════
+const TRUSTED_KEY='lumy_trusted_device';
+function updateSidebarTrustPanel(){
+  const trusted=localStorage.getItem(TRUSTED_KEY)==='yes';
+  document.getElementById('sbTrustIcon').textContent=trusted?'✅':'📱';
+  document.getElementById('sbTrustText').textContent=trusted?'Este dispositivo es de confianza ✅':'Este dispositivo NO es de confianza';
+  document.getElementById('sbTrustText').style.color=trusted?'#34d399':'#fff';
+  document.getElementById('sbTrustSub').textContent=trusted?'No se pedirá contraseña al abrir la app':'Se pedirá contraseña al abrir la app';
+  const btn=document.getElementById('sbTrustBtn');
+  btn.textContent=trusted?'🔓 Quitar confianza':'🔒 Marcar como confianza';
+  btn.className='btn-trust-action '+(trusted?'btn-trust-remove':'btn-trust-mark');
+}
+function handleTrust(){
+  const trusted=localStorage.getItem(TRUSTED_KEY)==='yes';
+  if(trusted){ localStorage.removeItem(TRUSTED_KEY); showFlash('📱 Dispositivo ya no es de confianza','exit'); }
+  else{ localStorage.setItem(TRUSTED_KEY,'yes'); showFlash('✅ Dispositivo marcado como de confianza','entry'); }
+  updateSidebarTrustPanel();
+}
+window.handleTrust=handleTrust;
+
+// ══════════════════════════════════════════════
+//  VEHICLE TYPE MODAL
+// ══════════════════════════════════════════════
+function openVtypeModal(code,plate){
+  pendingCode=code; pendingPlate=plate||null;
+  document.getElementById('vtypeCode').textContent=code;
+  document.getElementById('vtypeOverlay').classList.add('show');
+}
+function closeVtypeModal(){ document.getElementById('vtypeOverlay').classList.remove('show'); pendingCode=null; pendingPlate=null; }
+function confirmVtype(type){ closeVtypeModal(); processEntry(pendingCode,type,pendingPlate); }
+window.closeVtypeModal=closeVtypeModal; window.confirmVtype=confirmVtype;
+
+// ══════════════════════════════════════════════
+//  EXIT CONFIRM
+// ══════════════════════════════════════════════
+function openExitConfirm(code){
+  pendingExitCode=code;
+  const rec=active[code];
+  const entry=new Date(rec.entry);
+  const elapsedMs=Date.now()-entry;
+  const typeLabel=rec.type==='moto'?'🏍️ Moto':'🚗 Auto';
+  const est=calcBill(elapsedMs,rec.type||'auto',entry);
+  document.getElementById('exitConfirmCode').textContent=code;
+  document.getElementById('exitConfirmInfo').textContent=`${typeLabel} · Entrada: ${rec.entryStr} · ~$${est}`;
+  document.getElementById('exitConfirmOverlay').classList.add('show');
+}
+function closeExitConfirm(){ document.getElementById('exitConfirmOverlay').classList.remove('show'); pendingExitCode=null; }
+function confirmExit(){ closeExitConfirm(); processExit(pendingExitCode); }
+window.closeExitConfirm=closeExitConfirm; window.confirmExit=confirmExit;
+
+// ══════════════════════════════════════════════
+//  PROCESS QR / MANUAL
+// ══════════════════════════════════════════════
+function getNextAvailableCode(){
+  const used=new Set(Object.keys(active).map(k=>parseInt(k)));
+  for(let n=100;n<=220;n++) if(!used.has(n)) return String(n);
+  return null;
+}
+function extractPlateFromQR(raw){
+  // Formato QR placa oficial mexicana: "TKM399A|OAXACA|PLACAS Y SEÑALAMIENTOS|..."
+  // El número de placa es el primer campo antes del primer |
+  if(raw.includes('|')){
+    const first=raw.split('|')[0].trim().toUpperCase();
+    // Validar que tenga formato de placa (letras y números, 5-8 chars)
+    if(/^[A-Z0-9]{4,8}$/.test(first)) return first;
+  }
+  return null;
+}
+function isPlateQR(raw){
+  const trimmed=raw.trim().toUpperCase();
+  // Si es número puro entre 100 y 220 → es ficha, no placa
+  const asNum=parseInt(trimmed);
+  if(/^\d+$/.test(trimmed)&&asNum>=100&&asNum<=220) return false;
+  // QR oficial con pipes → es placa
+  if(trimmed.includes('|')) return true;
+  // Formato placa simple: letras+números de 5-8 chars
+  return /^[A-Z]{2,4}\d{2,4}[A-Z]{0,2}$/.test(trimmed);
+}
+
+function processCode(raw){
+  const rawStr=raw.trim();
+  const now=Date.now();
+  if(rawStr===lastScanned&&now-lastScannedTime<3000) return;
+  lastScanned=rawStr; lastScannedTime=now;
+
+  if(isPlateQR(rawStr)){
+    // Extraer número de placa limpio (por si viene con pipes)
+    const plate = extractPlateFromQR(rawStr) || rawStr.split('|')[0].trim().toUpperCase();
+    const existing=Object.entries(active).find(([code,rec])=>rec.plate===plate);
+    if(existing) openExitConfirm(existing[0]);
+    else{
+      const nextCode=getNextAvailableCode();
+      if(!nextCode) return showFlash('⚠️ No hay fichas disponibles (100-220 llenas)','error');
+      showFlash(`🚘 Placa ${plate} · Ficha asignada: ${nextCode}`,'exit');
+      openVtypeModal(nextCode,plate);
+    }
+  }else{
+    const asNum=parseInt(rawStr.trim());
+    if(isNaN(asNum)||asNum<100||asNum>220){
+      return showFlash('⚠️ Código no reconocido. Debe ser ficha (100–220) o placa válida.','error');
+    }
+    const code=String(asNum);
+    if(active[code]) openExitConfirm(code);
+    else openVtypeModal(code,null);
+  }
+}
+
+function processEntry(code,type,plate){
+  const now=new Date();
+  active[code]={entry:now,entryStr:formatTime(now),type,...(plate?{plate}:{})};
+  totalEntries++;
+  showEntryTicket(code,now,type,plate);
+  render(); saveState();
+}
+function processExit(code){
+  const rec=active[code];
+  const entry=new Date(rec.entry);
+  const exit=new Date();
+  const elapsedMs=exit-entry;
+  const hoursRaw=elapsedMs/3600000;
+  const type=rec.type||'auto';
+  const total=calcBill(elapsedMs,type,entry);
+  const desc=billingDescription(elapsedMs,type,entry);
+  const record={code,type,entryStr:rec.entryStr,exitStr:formatTime(exit),hours:(elapsedMs/3600000).toFixed(2),total,desc};
+  history.unshift(record); delete active[code];
+  showExitTicket(code,type,rec.entryStr,formatTime(exit),hoursRaw,total,desc);
+  render(); saveState();
+}
+function processManual(){
+  const val=parseInt(document.getElementById('manualCode').value.trim());
+  if(!val) return;
+  if(val<100||val>220) return showFlash('⚠️ La ficha debe ser del 100 al 220.','error');
+  processCode(String(val));
+  document.getElementById('manualCode').value='';
+}
+window.processManual=processManual;
+
+// ══════════════════════════════════════════════
+//  TICKETS
+// ══════════════════════════════════════════════
+function showEntryTicket(code,now,type,plate){
+  const typeLabel=type==='moto'?'🏍️ Moto/Mototaxi':'🚗 Auto';
+  document.getElementById('et-ficha').textContent=code;
+  document.getElementById('et-tipo').textContent=typeLabel+(plate?` · ${plate}`:'');
+  document.getElementById('et-fecha').textContent=now.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('et-hora').textContent=formatTime(now);
+  document.getElementById('entryScreen').classList.add('show');
+}
+function showExitTicket(code,type,entryStr,exitStr,hoursRaw,total,desc){
+  const typeLabel=type==='moto'?'🏍️ Moto/Mototaxi':'🚗 Auto';
+  document.getElementById('xt-ficha').textContent=code;
+  document.getElementById('xt-tipo').textContent=typeLabel;
+  document.getElementById('xt-entrada').textContent=entryStr;
+  document.getElementById('xt-salida').textContent=exitStr;
+  document.getElementById('xt-tiempo').textContent=formatDuration(hoursRaw);
+  document.getElementById('xt-total').textContent='$'+total;
+  document.getElementById('xt-sub').textContent=desc;
+  document.getElementById('exitScreen').classList.add('show');
+}
+function closeTicket(type){ document.getElementById(type==='entry'?'entryScreen':'exitScreen').classList.remove('show'); }
+window.closeTicket=closeTicket;
+
+// ══════════════════════════════════════════════
+//  FLASH
+// ══════════════════════════════════════════════
+let flashTimer;
+function showFlash(msg,type){
+  const el=document.getElementById('flash');
+  el.innerHTML=msg; el.className=type; el.style.display='block';
+  clearTimeout(flashTimer);
+  flashTimer=setTimeout(()=>el.style.display='none',4000);
+}
+
+// ══════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════
+function render(){renderGrid(); renderHistory(); renderSummary();}
+
+function renderGrid(){
+  const grid=document.getElementById('spotsGrid');
+  const count=Object.keys(active).length;
+  document.getElementById('activeCount').textContent=count;
+  if(count===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><span class="empty-icon">🅿️</span><div class="empty-text">Sin vehículos activos</div></div>`;
+    return;
+  }
+  grid.innerHTML=Object.entries(active).map(([code,rec])=>{
+    const entry=new Date(rec.entry);
+    const elapsedMs=Date.now()-entry;
+    const elapsed=elapsedMs/3600000;
+    const type=rec.type||'auto';
+    const est=calcBill(elapsedMs,type,entry);
+    const typeLabel=type==='moto'?'🏍️ MOTO':'🚗 AUTO';
+
+    // Next billing threshold note
+    let nextNote='';
+    if(type==='auto'){
+      const halfHoursCeil=Math.ceil(Math.max(Math.ceil(elapsedMs/60000),1)/30);
+      if(halfHoursCeil===4) nextNote='· 3ª hr gratis →';
+      if(halfHoursCeil>=10) nextNote='· Tarifa máx';
+    }
+
+    return `<div class="spot-card"><div class="live-dot"></div>
+      <div class="spot-num">${code}</div>
+      <span class="spot-type-badge ${type}">${typeLabel}</span>
+      <div class="spot-time">Entrada: ${rec.entryStr}</div>
+      <div class="spot-elapsed">⏱ ${formatDuration(elapsed)}</div>
+      <div class="spot-est">~$${est}</div>
+      ${nextNote?`<div class="spot-billing-note">${nextNote}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderHistory(){
+  const tbody=document.getElementById('histBody');
+  if(history.length===0){
+    tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><span class="empty-icon">📋</span><div class="empty-text">Sin registros aún</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=history.map(r=>{
+    const typeLabel=r.type==='moto'?'🏍️':'🚗';
+    return `<tr>
+      <td><span class="ficha-num">${r.code}</span></td>
+      <td>${typeLabel}</td>
+      <td>${r.entryStr}</td><td>${r.exitStr}</td><td>${parseFloat(r.hours).toFixed(2)}h</td>
+      <td><span class="total-chip">$${r.total} <span class="paid-badge">✓</span></span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSummary(){
+  document.getElementById('sumActive').textContent=Object.keys(active).length;
+  document.getElementById('sumEntries').textContent=totalEntries;
+  document.getElementById('sumToday').textContent=history.length;
+}
+
+setInterval(()=>{if(Object.keys(active).length) renderGrid();},1000);
+
+// ══════════════════════════════════════════════
+//  CLOSE DAY
+// ══════════════════════════════════════════════
+function openCloseDayModal(){
+  const income=history.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  const pending=Object.keys(active).length;
+  document.getElementById('mEntries').textContent=totalEntries;
+  document.getElementById('mExits').textContent=history.length;
+  document.getElementById('mActive').textContent=pending;
+  document.getElementById('mIncome').textContent='$'+income.toFixed(0);
+  document.getElementById('modalDate').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('mNote').innerHTML=pending>0
+    ?`<span>⚠️ Hay ${pending} vehículo(s) aún adentro.</span> Quedarán como pendientes en el reporte.`
+    :`✅ Todos los vehículos han salido. Se guardará el reporte.`;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+async function confirmCloseDay(){
+  const income=history.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  const rep={
+    date:new Date().toLocaleDateString('es-MX',{weekday:'short',year:'numeric',month:'short',day:'numeric'}),
+    entries:totalEntries,exits:history.length,income:income.toFixed(0),pending:Object.keys(active).length
+  };
+  reports.unshift(rep); active={}; history=[]; totalEntries=0;
+  closeModal(); render(); await saveState();
+  showFlash(`✅ Día cerrado · $${income.toFixed(0)} cobrados · ${rep.exits} salidas`,'entry');
+}
+window.openCloseDayModal=openCloseDayModal; window.closeModal=closeModal; window.confirmCloseDay=confirmCloseDay;
+
+// ══════════════════════════════════════════════
+//  SCANNER
+// ══════════════════════════════════════════════
+function startScanner(){
+  document.getElementById('startBtn').style.display='none';
+  document.getElementById('stopBtn').style.display='inline-block';
+  scanner=new Html5Qrcode("reader");
+  scanner.start({facingMode:"environment"},{
+      fps:15,
+      qrbox:{width:260,height:180},
+      formatsToSupport:[
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.CODE_39,
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.DATA_MATRIX,
+        Html5QrcodeSupportedFormats.PDF_417
+      ]
+    },
+    text=>processCode(text),()=>{})
+    .catch(err=>{showFlash('Error al abrir cámara: '+err,'error'); stopScanner();});
+}
+function stopScanner(){
+  if(scanner){scanner.stop().catch(()=>{}); scanner=null;}
+  document.getElementById('startBtn').style.display='inline-block';
+  document.getElementById('stopBtn').style.display='none';
+}
+window.startScanner=startScanner; window.stopScanner=stopScanner;
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function formatTime(d){ return d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function formatDuration(h){
+  const hh=Math.floor(h), mm=Math.round((h-hh)*60);
+  if(hh===0) return `${mm} min`;
+  return mm>0?`${hh}h ${mm}min`:`${hh}h`;
+}
+
+// ══════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════
+function checkLogin(){
+  const trusted=localStorage.getItem(TRUSTED_KEY)==='yes';
+  const hasSession=sessionStorage.getItem('lumy_session')==='active';
+  if(trusted||hasSession){
+    document.getElementById('loginScreen').classList.add('hidden');
+    loadAll();
+  }else{
+    document.getElementById('loadingOverlay').style.display='none';
+    setTimeout(()=>document.getElementById('loginInput').focus(),100);
+  }
+}
+function doLogin(){
+  const val=document.getElementById('loginInput').value;
+  if(val===PASSWORD){
+    sessionStorage.setItem('lumy_session','active');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('loadingOverlay').style.display='flex';
+    loadAll();
+  }else{
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+window.doLogin=doLogin;
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.getElementById('manualCode').addEventListener('keydown',e=>{if(e.key==='Enter') processManual();});
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget) closeModal();});
+document.getElementById('pwOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget) closePwModal();});
+document.getElementById('vtypeOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget) closeVtypeModal();});
+document.getElementById('exitConfirmOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget) closeExitConfirm();});
+
+window.addEventListener('pagehide',()=>{
+  if(localStorage.getItem(TRUSTED_KEY)!=='yes') sessionStorage.removeItem('lumy_session');
+});
+sessionStorage.setItem('lumy_session','active');
+checkLogin();
+</script>
+</body>
+</html>
