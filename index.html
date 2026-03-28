@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0c">
+<title>LUMY-V Estacionamiento</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root{
+    --bg:#0a0a0c;--card:#111113;--card2:#161618;--border:#222226;
+    --accent:#f5c518;--accent2:#ff6b35;--text:#f0f0f0;
+    --muted:#555;--green:#4caf82;--red:#e05252;--header-h:72px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overscroll-behavior:none;}
+
+header{height:var(–header-h);background:linear-gradient(180deg,#111113,#0e0e10);border-bottom:1px solid var(–border);box-shadow:0 1px 0 rgba(245,197,24,0.08),0 4px 24px rgba(0,0,0,0.5);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:12px;}
+.hd-logo{display:flex;align-items:center;gap:14px;}
+.logo-svg-wrap{height:48px;width:48px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,0.06),0 2px 12px rgba(0,0,0,0.4);}
+.hd-brand-name{font-family:‘Bebas Neue’,sans-serif;font-size:1.55rem;letter-spacing:3px;background:linear-gradient(135deg,#f5c518,#ffd966,#e6a800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.hd-brand-sub{font-size:0.58rem;letter-spacing:4px;text-transform:uppercase;color:var(–muted);margin-top:2px;}
+.hd-right{display:flex;align-items:center;gap:10px;}
+.hd-clock-wrap{background:#0d0d0f;border:1px solid var(–border);border-radius:10px;padding:6px 14px;display:flex;flex-direction:column;align-items:flex-end;}
+#clock{font-family:‘Bebas Neue’,sans-serif;font-size:1.1rem;letter-spacing:1px;color:var(–accent);line-height:1;}
+#dateLabel{font-size:0.58rem;color:var(–muted);letter-spacing:0.5px;margin-top:1px;}
+.status-pill{background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);border-radius:20px;padding:4px 12px;font-size:0.68rem;color:var(–green);display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(–green);box-shadow:0 0 6px var(–green);animation:pulse 2s infinite;}
+
+.sync-pill{background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);border-radius:20px;padding:4px 12px;font-size:0.65rem;color:var(–accent);display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all 0.3s;}
+.sync-pill.syncing{color:var(–accent2);border-color:rgba(255,107,53,0.3);}
+.sync-pill.ok{color:var(–green);border-color:rgba(76,175,130,0.25);background:rgba(76,175,130,0.07);}
+
+.container{max-width:860px;margin:0 auto;padding:20px 14px 40px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.section-title{font-family:‘Bebas Neue’,sans-serif;font-size:1rem;letter-spacing:2px;color:var(–muted);display:flex;align-items:center;gap:8px;}
+.badge{background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.3);color:var(–accent2);font-size:0.7rem;padding:2px 9px;border-radius:20px;font-family:‘DM Sans’,sans-serif;font-weight:600;}
+
+.config-card{background:var(–card);border:1px solid var(–border);border-radius:16px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.lock-info{flex:1;font-size:0.82rem;color:var(–muted);line-height:1.6;}
+.lock-info strong{color:var(–text);}
+.btn-unlock{background:transparent;border:1px solid var(–border);color:var(–muted);padding:7px 16px;border-radius:8px;font-family:‘DM Sans’,sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.btn-unlock:hover{border-color:var(–accent);color:var(–accent);}
+.edit-field{background:#1a1a1c;border:1px solid var(–border);color:var(–text);padding:8px 12px;border-radius:8px;font-size:1rem;font-family:‘DM Sans’,sans-serif;width:100px;}
+.edit-field:focus{outline:none;border-color:var(–accent);}
+.edit-select{background:#1a1a1c;border:1px solid var(–border);color:var(–text);padding:8px 10px;border-radius:8px;font-family:‘DM Sans’,sans-serif;font-size:0.82rem;}
+.config-label{font-size:0.78rem;color:var(–muted);white-space:nowrap;}
+
+.scanner-card{background:var(–card);border:1px solid var(–border);border-radius:20px;padding:20px;margin-bottom:16px;}
+.scanner-inner{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.scanner-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.05rem;letter-spacing:2px;color:var(–muted);align-self:flex-start;}
+#reader{border-radius:14px;overflow:hidden;width:100%;max-width:320px;}
+.scanner-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn{background:var(–accent);color:#000;border:none;padding:11px 28px;border-radius:10px;font-family:‘Bebas Neue’,sans-serif;font-size:1rem;letter-spacing:1px;cursor:pointer;transition:opacity 0.15s;}
+.btn:active{opacity:0.75;}
+.btn.stop{background:#2a2a2e;color:var(–red);border:1px solid var(–red);}
+.btn.close-day{background:transparent;color:var(–accent2);border:1px solid rgba(255,107,53,0.35);font-family:‘Bebas Neue’,sans-serif;font-size:0.9rem;letter-spacing:1px;padding:8px 18px;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+.manual-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;padding-top:4px;border-top:1px solid var(–border);}
+.manual-label{font-size:0.72rem;color:var(–muted);}
+.manual-row input{background:#1a1a1c;border:1px solid var(–border);color:var(–text);padding:9px 12px;border-radius:8px;font-size:1rem;font-family:‘DM Sans’,sans-serif;width:110px;text-align:center;}
+.manual-row input:focus{outline:none;border-color:var(–accent);}
+.btn-sm{background:#1e1e21;color:var(–text);border:1px solid var(–border);padding:9px 16px;border-radius:8px;font-family:‘DM Sans’,sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.btn-sm:active{background:var(–accent);color:#000;border-color:var(–accent);}
+
+#flash{border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:0.88rem;font-weight:500;display:none;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+#flash.entry{background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);color:var(–green);}
+#flash.exit{background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);color:var(–accent);}
+#flash.error{background:rgba(224,82,82,0.08);border:1px solid rgba(224,82,82,0.25);color:var(–red);}
+
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.summary-item{background:var(–card);border:1px solid var(–border);border-radius:14px;padding:14px 10px;text-align:center;}
+.summary-item .val{font-family:‘Bebas Neue’,sans-serif;font-size:1.7rem;color:var(–accent);line-height:1;}
+.summary-item .lbl{font-size:0.62rem;color:var(–muted);margin-top:4px;letter-spacing:0.5px;}
+.summary-item.green .val{color:var(–green);}
+
+.spots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin-bottom:24px;}
+.spot-card{background:var(–card);border:1px solid var(–border);border-radius:14px;padding:16px 14px;position:relative;transition:border-color 0.2s;}
+.spot-card:hover{border-color:rgba(245,197,24,0.2);}
+.spot-num{font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;color:var(–accent);line-height:1;}
+.spot-time{font-size:0.68rem;color:var(–muted);margin-top:5px;}
+.spot-elapsed{font-size:0.8rem;color:var(–text);margin-top:3px;font-weight:500;}
+.spot-est{font-size:0.78rem;color:var(–accent);margin-top:5px;display:flex;align-items:center;gap:4px;}
+.spot-secs{font-size:0.65rem;color:var(–accent2);opacity:0.85;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(–green);position:absolute;top:14px;right:14px;box-shadow:0 0 8px var(–green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.empty-state{text-align:center;padding:36px;color:var(–muted);font-size:0.82rem;}
+.empty-state .icon{font-size:2rem;margin-bottom:8px;opacity:0.25;}
+
+.history-table{background:var(–card);border:1px solid var(–border);border-radius:16px;overflow:hidden;margin-bottom:24px;}
+table{width:100%;border-collapse:collapse;}
+thead{background:#0d0d0f;}
+th{padding:11px 14px;font-family:‘Bebas Neue’,sans-serif;font-size:0.8rem;letter-spacing:1px;color:var(–muted);text-align:left;border-bottom:1px solid var(–border);}
+td{padding:10px 14px;font-size:0.78rem;border-bottom:1px solid #151517;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.015);}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.68rem;font-weight:600;}
+.chip.paid{background:rgba(76,175,130,0.12);color:var(–green);border:1px solid rgba(76,175,130,0.2);}
+.total-amount{font-weight:600;color:var(–accent);}
+
+.report-card{background:var(–card);border:1px solid var(–border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.report-date{font-weight:600;font-size:0.82rem;}
+.report-stats{display:flex;gap:14px;font-size:0.75rem;color:var(–muted);flex-wrap:wrap;}
+.report-stats strong{color:var(–accent);}
+
+#loadingOverlay{position:fixed;inset:0;background:var(–bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loading-logo{font-family:‘Bebas Neue’,sans-serif;font-size:2.5rem;letter-spacing:4px;background:linear-gradient(135deg,#f5c518,#ffd966);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.loading-sub{font-size:0.75rem;color:var(–muted);letter-spacing:2px;}
+.loading-spinner{width:32px;height:32px;border:3px solid var(–border);border-top-color:var(–accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ticket-screen{display:none;position:fixed;inset:0;z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+.ticket-screen.show{display:flex;}
+.entry-screen{background:radial-gradient(ellipse at 50% 40%,#071a12,#040d09);}
+.exit-screen{background:radial-gradient(ellipse at 50% 40%,#1a1200,#090700);}
+.ticket-glow{position:absolute;width:320px;height:320px;border-radius:50%;filter:blur(70px);pointer-events:none;top:10%;left:50%;transform:translateX(-50%);}
+.entry-screen .ticket-glow{background:rgba(76,175,130,0.07);}
+.exit-screen .ticket-glow{background:rgba(245,197,24,0.07);}
+.ticket-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:28px;padding:32px 28px;width:100%;max-width:360px;text-align:center;backdrop-filter:blur(12px);animation:ticketIn 0.4s cubic-bezier(0.34,1.56,0.64,1);position:relative;}
+@keyframes ticketIn{from{opacity:0;transform:scale(0.82) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.ticket-logo-wrap{width:54px;height:54px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+.ticket-brand{font-family:‘Bebas Neue’,sans-serif;font-size:1rem;letter-spacing:3px;opacity:0.4;margin-bottom:12px;}
+.entry-screen .ticket-brand{color:var(–green);}
+.exit-screen .ticket-brand{color:var(–accent);}
+.ticket-status{font-family:‘Bebas Neue’,sans-serif;font-size:0.88rem;letter-spacing:2px;padding:5px 16px;border-radius:30px;display:inline-block;margin-bottom:22px;}
+.entry-screen .ticket-status{background:rgba(76,175,130,0.12);color:var(–green);border:1px solid rgba(76,175,130,0.25);}
+.exit-screen .ticket-status{background:rgba(245,197,24,0.1);color:var(–accent);border:1px solid rgba(245,197,24,0.25);}
+.ticket-ficha-label{font-size:0.62rem;color:var(–muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.ticket-ficha{font-family:‘Bebas Neue’,sans-serif;font-size:4.5rem;line-height:1;margin-bottom:4px;}
+.entry-screen .ticket-ficha{color:var(–green);}
+.exit-screen .ticket-ficha{color:var(–accent);}
+.ticket-divider{border:none;border-top:1px dashed rgba(255,255,255,0.08);margin:18px 0;}
+.ticket-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.ticket-row-label{font-size:0.72rem;color:var(–muted);}
+.ticket-row-val{font-size:0.88rem;font-weight:500;color:var(–text);}
+.ticket-total-block{margin-top:18px;padding:18px;border-radius:16px;text-align:center;}
+.exit-screen .ticket-total-block{background:rgba(245,197,24,0.07);border:1px solid rgba(245,197,24,0.18);}
+.ticket-total-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(–muted);margin-bottom:6px;}
+.ticket-total-amount{font-family:‘Bebas Neue’,sans-serif;font-size:3.8rem;line-height:1;color:var(–accent);}
+.ticket-total-sub{font-size:0.68rem;color:var(–muted);margin-top:6px;}
+.ticket-welcome{margin-top:18px;padding:14px;border-radius:14px;background:rgba(76,175,130,0.07);border:1px solid rgba(76,175,130,0.18);}
+.ticket-welcome-txt{font-size:0.88rem;color:var(–green);font-weight:500;}
+.ticket-welcome-sub{font-size:0.7rem;color:var(–muted);margin-top:4px;}
+.ticket-close-btn{margin-top:22px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(–text);padding:13px 38px;border-radius:50px;font-family:‘DM Sans’,sans-serif;font-size:0.92rem;font-weight:500;cursor:pointer;transition:background 0.2s;}
+.ticket-close-btn:active{background:rgba(255,255,255,0.12);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(–card2);border:1px solid var(–border);border-radius:22px;padding:28px;max-width:500px;width:100%;animation:modalIn 0.3s ease;box-shadow:0 24px 80px rgba(0,0,0,0.6);}
+@keyframes modalIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
+.modal h2{font-family:‘Bebas Neue’,sans-serif;font-size:1.7rem;letter-spacing:2px;color:var(–accent);margin-bottom:4px;}
+.modal .modal-date{font-size:0.76rem;color:var(–muted);margin-bottom:18px;}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.modal-stat{background:#0d0d0f;border:1px solid var(–border);border-radius:12px;padding:14px;text-align:center;}
+.modal-stat .mval{font-family:‘Bebas Neue’,sans-serif;font-size:1.8rem;color:var(–accent);}
+.modal-stat .mlbl{font-size:0.68rem;color:var(–muted);margin-top:2px;}
+.modal-stat.highlight{border-color:rgba(76,175,130,0.3);}
+.modal-stat.highlight .mval{color:var(–green);}
+.modal-divider{border:none;border-top:1px solid var(–border);margin:14px 0;}
+.modal-note{font-size:0.78rem;color:var(–muted);margin-bottom:18px;line-height:1.6;}
+.modal-note span{color:var(–accent2);}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-outline{background:transparent;color:var(–text);border:1px solid var(–border);padding:9px 18px;border-radius:8px;font-family:‘DM Sans’,sans-serif;font-size:0.88rem;cursor:pointer;}
+.btn-danger{background:var(–red);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-family:‘Bebas Neue’,sans-serif;font-size:0.95rem;letter-spacing:1px;cursor:pointer;}
+.pw-modal{border-color:rgba(255,107,53,0.3);max-width:340px;}
+.pw-modal h2{color:var(–accent2);font-size:1.3rem;}
+.pw-input{background:#0d0d0f;border:1px solid var(–border);color:var(–text);padding:12px 14px;border-radius:10px;font-size:1rem;font-family:‘DM Sans’,sans-serif;width:100%;margin:14px 0;}
+.pw-input:focus{outline:none;border-color:var(–accent);}
+.pw-error{color:var(–red);font-size:0.78rem;margin-top:-8px;margin-bottom:12px;display:none;}
+
+@media(max-width:520px){
+.summary{grid-template-columns:repeat(2,1fr);}
+.hd-brand-name{font-size:1.25rem;}
+th,td{padding:8px 10px;font-size:0.73rem;}
+.ticket-ficha{font-size:3.6rem;}
+.ticket-total-amount{font-size:3rem;}
+.status-pill{display:none;}
+}
+</style>
+
+</head>
+<body>
+
+<!-- Loading -->
+
+<div id="loadingOverlay">
+  <div class="loading-logo">LUMY‑V</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-sub">Conectando con servidor...</div>
+</div>
+
+<header>
+  <div class="hd-logo">
+    <div class="logo-svg-wrap">
+      <svg viewBox="0 0 120 80" width="42" height="42" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,68 A52,52 0 0,1 12,12" stroke="#111" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <line x1="7" y1="20" x2="16" y2="22" stroke="#fff" stroke-width="2.2"/>
+        <line x1="5" y1="28" x2="14" y2="29" stroke="#fff" stroke-width="2.2"/>
+        <line x1="4" y1="36" x2="13" y2="36" stroke="#fff" stroke-width="2.2"/>
+        <line x1="4" y1="44" x2="13" y2="43" stroke="#fff" stroke-width="2.2"/>
+        <line x1="6" y1="52" x2="15" y2="50" stroke="#fff" stroke-width="2.2"/>
+        <line x1="9" y1="59" x2="17" y2="57" stroke="#fff" stroke-width="2.2"/>
+        <text x="26" y="38" font-family="Georgia,serif" font-weight="900" font-size="19" fill="#111" letter-spacing="1">LUMY</text>
+        <line x1="78" y1="34" x2="84" y2="34" stroke="#111" stroke-width="2.5"/>
+        <text x="86" y="38" font-family="Georgia,serif" font-weight="900" font-size="19" fill="#111">V</text>
+        <path d="M48,44 Q54,38 62,38 Q70,38 76,44 L78,44 L78,50 L44,50 L44,44 Z" fill="#111"/>
+        <ellipse cx="50" cy="50" rx="4" ry="3" fill="#555"/>
+        <ellipse cx="72" cy="50" rx="4" ry="3" fill="#555"/>
+        <text x="26" y="62" font-family="Arial,sans-serif" font-size="7" fill="#444" letter-spacing="0.8">ESTACIONAMIENTO</text>
+      </svg>
+    </div>
+    <div class="hd-brand">
+      <div class="hd-brand-name">LUMY‑V</div>
+      <div class="hd-brand-sub">Sistema de Estacionamiento</div>
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="sync-pill" id="syncPill">☁️ Conectando</div>
+    <div class="status-pill"><div class="status-dot"></div>En línea</div>
+    <div class="hd-clock-wrap">
+      <div id="clock">00:00</div>
+      <div id="dateLabel">—</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="config-card" id="configBar">
+    <span style="font-size:1.2rem;">⚙️</span>
+    <div class="lock-info" id="configLockedInfo">
+      Tarifa: <strong>$<span id="rateDisplay">20</span>/hr</strong> &nbsp;·&nbsp;
+      Cobro: <strong><span id="fracDisplay">Por minuto completo</span></strong>
+    </div>
+    <button class="btn-unlock" onclick="askUnlock('config')">✏️ Modificar</button>
+    <input type="hidden" id="rate" value="20">
+    <input type="hidden" id="fraction" value="0">
+    <div id="configEdit" style="display:none;width:100%;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="config-label">💰 Tarifa/hr:</span>
+      <span style="font-size:0.9rem;color:var(--accent);font-weight:600;">$</span>
+      <input type="number" id="rateEdit" class="edit-field" value="20" min="1" step="1">
+      <span class="config-label">Cobro:</span>
+      <select id="fractionEdit" class="edit-select">
+        <option value="0">Por minuto completo</option>
+        <option value="1">Por hora completa</option>
+        <option value="0.5">Por media hora</option>
+        <option value="0.25">Por bloques de 15 min</option>
+      </select>
+      <button class="btn-sm" onclick="saveConfig()" style="background:var(--green);color:#000;border-color:var(--green);">✓ Guardar</button>
+      <button class="btn-sm" onclick="lockConfig()">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="flash"></div>
+
+  <div class="scanner-card">
+    <div class="scanner-inner">
+      <div class="scanner-title">📷 Escanear ficha QR</div>
+      <div id="reader"></div>
+      <div class="scanner-actions">
+        <button class="btn" id="startBtn" onclick="startScanner()">Iniciar cámara</button>
+        <button class="btn stop" id="stopBtn" onclick="stopScanner()" style="display:none">⏹ Detener</button>
+      </div>
+      <div class="manual-row">
+        <span class="manual-label">O ingresa número de ficha:</span>
+        <input type="number" id="manualCode" placeholder="100–200" min="100" max="200">
+        <button class="btn-sm" onclick="processManual()">Registrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-item"><div class="val" id="sumActive">0</div><div class="lbl">Activos ahora</div></div>
+    <div class="summary-item"><div class="val" id="sumEntries">0</div><div class="lbl">Entradas hoy</div></div>
+    <div class="summary-item"><div class="val" id="sumToday">0</div><div class="lbl">Salidas hoy</div></div>
+    <div class="summary-item green"><div class="val" id="sumIncome">$0</div><div class="lbl">Cobrado hoy</div></div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">Vehículos activos <span class="badge" id="activeCount">0</span></div>
+  </div>
+  <div class="spots-grid" id="spotsGrid">
+    <div class="empty-state" style="grid-column:1/-1"><div class="icon">🚗</div>Sin vehículos activos</div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">Historial de hoy</div>
+    <button class="btn close-day" onclick="askUnlock('closeday')">🔒 Cerrar día</button>
+  </div>
+  <div class="history-table">
+    <table>
+      <thead><tr><th>Ficha</th><th>Entrada</th><th>Salida</th><th>Tiempo</th><th>Total</th></tr></thead>
+      <tbody id="histBody"><tr><td colspan="5"><div class="empty-state"><div class="icon">📋</div>Sin registros aún</div></td></tr></tbody>
+    </table>
+  </div>
+
+  <div id="reportsSection" style="display:none;">
+    <div class="section-title" style="margin-bottom:12px;">📁 Cierres anteriores</div>
+    <div id="reportsList"></div>
+  </div>
+</div>
+
+<!-- Ticket Entrada -->
+
+<div class="ticket-screen entry-screen" id="entryScreen">
+  <div class="ticket-glow"></div>
+  <div class="ticket-card">
+    <div class="ticket-logo-wrap">
+      <svg viewBox="0 0 120 80" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,68 A52,52 0 0,1 12,12" stroke="#111" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <line x1="7" y1="20" x2="16" y2="22" stroke="#fff" stroke-width="2.2"/>
+        <line x1="5" y1="28" x2="14" y2="29" stroke="#fff" stroke-width="2.2"/>
+        <line x1="4" y1="36" x2="13" y2="36" stroke="#fff" stroke-width="2.2"/>
+        <line x1="4" y1="44" x2="13" y2="43" stroke="#fff" stroke-width="2.2"/>
+        <line x1="6" y1="52" x2="15" y2="50" stroke="#fff" stroke-width="2.2"/>
+        <line x1="9" y1="59" x2="17" y2="57" stroke="#fff" stroke-width="2.2"/>
+        <text x="26" y="38" font-family="Georgia,serif" font-weight="900" font-size="19" fill="#111" letter-spacing="1">LUMY</text>
+        <line x1="78" y1="34" x2="84" y2="34" stroke="#111" stroke-width="2.5"/>
+        <text x="86" y="38" font-family="Georgia,serif" font-weight="900" font-size="19" fill="#111">V</text>
+        <path d="M48,44 Q54,38 62,38 Q70,38 76,44 L78,44 L78,50 L44,50 L44,44 Z" fill="#111"/>
+        <ellipse cx="50" cy="50" rx="4" ry="3" fill="#555"/>
+        <ellipse cx="72" cy="50" rx="4" ry="3" fill="#555"/>
+        <text x="26" y="62" font-family="Arial,sans-serif" font-size="7" fill="#444" letter-spacing="0.8">ESTACIONAMIENTO</text>
+      </svg>
+    </div>
+    <div class="ticket-brand">LUMY‑V ESTACIONAMIENTO</div>
+    <div class="ticket-status">✓ ENTRADA REGISTRADA</div>
+    <div class="ticket-ficha-label">FICHA</div>
+    <div class="ticket-ficha" id="et-ficha">—</div>
+    <hr class="ticket-divider">
+    <div class="ticket-row"><span class="ticket-row-label">📅 Fecha</span><span class="ticket-row-val" id="et-fecha">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕐 Hora de entrada</span><span class="ticket-row-val" id="et-hora">—</span></div>
+    <div class="ticket-welcome">
+      <div class="ticket-welcome-txt">¡Bienvenido!</div>
+      <div class="ticket-welcome-sub">Conserve su ficha para la salida</div>
+    </div>
+  </div>
+  <button class="ticket-close-btn" onclick="closeTicket('entry')">← Volver</button>
+</div>
+
+<!-- Ticket Salida -->
+
+<div class="ticket-screen exit-screen" id="exitScreen">
+  <div class="ticket-glow"></div>
+  <div class="ticket-card">
+    <div class="ticket-logo-wrap">
+      <svg viewBox="0 0 120 80" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,68 A52,52 0 0,1 12,12" stroke="#111" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <line x1="7" y1="20" x2="16" y2="22" stroke="#fff" stroke-width="2.2"/>
+        <line x1="5" y1="28" x2="14" y2="29" stroke="#fff" stroke-width="2.2"/>
+        <line x1="4" y1="36" x2="13" y2="36" stroke="#fff" stroke-width="2.2"/>
+        <line x1="4" y1="44" x2="13" y2="43" stroke="#fff" stroke-width="2.2"/>
+        <line x1="6" y1="52" x2="15" y2="50" stroke="#fff" stroke-width="2.2"/>
+        <line x1="9" y1="59" x2="17" y2="57" stroke="#fff" stroke-width="2.2"/>
+        <text x="26" y="38" font-family="Georgia,serif" font-weight="900" font-size="19" fill="#111" letter-spacing="1">LUMY</text>
+        <line x1="78" y1="34" x2="84" y2="34" stroke="#111" stroke-width="2.5"/>
+        <text x="86" y="38" font-family="Georgia,serif" font-weight="900" font-size="19" fill="#111">V</text>
+        <path d="M48,44 Q54,38 62,38 Q70,38 76,44 L78,44 L78,50 L44,50 L44,44 Z" fill="#111"/>
+        <ellipse cx="50" cy="50" rx="4" ry="3" fill="#555"/>
+        <ellipse cx="72" cy="50" rx="4" ry="3" fill="#555"/>
+        <text x="26" y="62" font-family="Arial,sans-serif" font-size="7" fill="#444" letter-spacing="0.8">ESTACIONAMIENTO</text>
+      </svg>
+    </div>
+    <div class="ticket-brand">LUMY‑V ESTACIONAMIENTO</div>
+    <div class="ticket-status">🏁 COBRO DE SERVICIO</div>
+    <div class="ticket-ficha-label">FICHA</div>
+    <div class="ticket-ficha" id="xt-ficha">—</div>
+    <hr class="ticket-divider">
+    <div class="ticket-row"><span class="ticket-row-label">🕐 Entrada</span><span class="ticket-row-val" id="xt-entrada">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕓 Salida</span><span class="ticket-row-val" id="xt-salida">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">⏱ Tiempo</span><span class="ticket-row-val" id="xt-tiempo">—</span></div>
+    <div class="ticket-total-block">
+      <div class="ticket-total-label">Total a pagar</div>
+      <div class="ticket-total-amount" id="xt-total">$0</div>
+      <div class="ticket-total-sub" id="xt-sub">—</div>
+    </div>
+  </div>
+  <button class="ticket-close-btn" onclick="closeTicket('exit')">← Volver</button>
+</div>
+
+<!-- Modal cierre día -->
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>🔒 Cierre del Día</h2>
+    <div class="modal-date" id="modalDate"></div>
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="mval" id="mEntries">0</div><div class="mlbl">Autos que entraron</div></div>
+      <div class="modal-stat"><div class="mval" id="mExits">0</div><div class="mlbl">Autos que salieron</div></div>
+      <div class="modal-stat"><div class="mval" id="mActive">0</div><div class="mlbl">Aún adentro</div></div>
+      <div class="modal-stat highlight"><div class="mval" id="mIncome">$0</div><div class="mlbl">Total cobrado</div></div>
+    </div>
+    <hr class="modal-divider">
+    <div class="modal-note" id="mNote"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn-danger" onclick="confirmCloseDay()">✓ Confirmar cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal contraseña -->
+
+<div class="modal-overlay" id="pwOverlay">
+  <div class="modal pw-modal">
+    <h2>🔑 Contraseña</h2>
+    <p style="font-size:0.78rem;color:var(--muted);margin-top:4px;">Solo el administrador puede realizar esta acción.</p>
+    <input type="password" id="pwInput" class="pw-input" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')checkPassword()">
+    <div class="pw-error" id="pwError">Contraseña incorrecta.</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closePwModal()">Cancelar</button>
+      <button class="btn" onclick="checkPassword()" style="font-family:'DM Sans',sans-serif;font-size:0.9rem;letter-spacing:0;">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, onSnapshot }
+    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDuw1RYWsjWvNLbCc8LbsTZP6Ebo5tKvPE",
+    authDomain: "base1estacionamiento.firebaseapp.com",
+    projectId: "base1estacionamiento",
+    storageBucket: "base1estacionamiento.firebasestorage.app",
+    messagingSenderId: "423755890406",
+    appId: "1:423755890406:web:3dea7bc9372a6655728527"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const PASSWORD = 'lumyestacionamiento1';
+  const FRAC_LABELS = {
+    '0': 'Por minuto completo',
+    '1': 'Por hora completa',
+    '0.5': 'Por media hora',
+    '0.25': 'Por bloques de 15 min'
+  };
+  const TODAY = new Date().toISOString().slice(0, 10);
+
+  const stateRef = doc(db, 'lumy', 'state');
+  const configRef = doc(db, 'lumy', 'config');
+
+  let active = {}, history = [], totalEntries = 0, reports = [];
+  let configRate = 20, configFrac = 0;
+  let scanner = null, lastScanned = null, lastScannedTime = 0;
+  let pwPurpose = 'config';
+
+  // ── SYNC PILL ──────────────────────────────────────────────────
+  function setSyncStatus(s) {
+    const p = document.getElementById('syncPill');
+    if (s === 'syncing') { p.textContent = '🔄 Guardando'; p.className = 'sync-pill syncing'; }
+    else { p.textContent = '☁️ Sincronizado'; p.className = 'sync-pill ok'; }
+  }
+
+  // ── SAVE TO FIREBASE ───────────────────────────────────────────
+  async function saveState() {
+    setSyncStatus('syncing');
+    const activeSerial = {};
+    for (let k in active) {
+      activeSerial[k] = { ...active[k], entry: active[k].entry instanceof Date ? active[k].entry.toISOString() : active[k].entry };
+    }
+    try {
+      await setDoc(stateRef, { date: TODAY, active: activeSerial, history, totalEntries, reports }, { merge: false });
+      setSyncStatus('ok');
+    } catch (e) {
+      showFlash('⚠️ Error al guardar: ' + e.message, 'error');
+    }
+  }
+
+  // ── SAVE CONFIG ───────────────────────────────────────────────
+  async function saveConfig() {
+    configRate = parseFloat(document.getElementById('rateEdit').value) || 20;
+    configFrac = parseFloat(document.getElementById('fractionEdit').value);
+    document.getElementById('rate').value = configRate;
+    document.getElementById('fraction').value = configFrac;
+    updateConfigDisplay();
+    lockConfig();
+    try {
+      await setDoc(configRef, { configRate, configFrac });
+      showFlash(`✅ Tarifa actualizada · $${configRate}/hr · ${FRAC_LABELS[String(configFrac)]}`, 'entry');
+    } catch (e) {
+      showFlash('Error guardando config', 'error');
+    }
+  }
+  window.saveConfig = saveConfig;
+
+  // ── LOAD FROM FIREBASE ─────────────────────────────────────────
+  async function loadAll() {
+    try {
+      const cfgSnap = await getDoc(configRef);
+      if (cfgSnap.exists()) {
+        const c = cfgSnap.data();
+        configRate = c.configRate || 20;
+        configFrac = c.configFrac !== undefined ? c.configFrac : 0;
+        document.getElementById('rateEdit').value = configRate;
+        document.getElementById('fractionEdit').value = configFrac;
+        updateConfigDisplay();
+      }
+
+      const stSnap = await getDoc(stateRef);
+      if (stSnap.exists()) {
+        const d = stSnap.data();
+        if (d.date && d.date !== TODAY) {
+          const rep = {
+            date: d.date,
+            entries: d.totalEntries || 0,
+            exits: (d.history || []).length,
+            income: (d.history || []).reduce((s, r) => s + parseFloat(r.total || 0), 0).toFixed(0),
+            pending: Object.keys(d.active || {}).length
+          };
+          reports = d.reports || [];
+          reports.unshift(rep);
+          active = {}; history = []; totalEntries = 0;
+          await saveState();
+        } else {
+          active = d.active || {};
+          for (let k in active) active[k].entry = new Date(active[k].entry);
+          history = d.history || [];
+          totalEntries = d.totalEntries || 0;
+          reports = d.reports || [];
+        }
+      }
+    } catch (e) {
+      showFlash('Error al conectar: ' + e.message, 'error');
+    }
+
+    document.getElementById('loadingOverlay').style.display = 'none';
+    setSyncStatus('ok');
+    render();
+  }
+
+  // ── REALTIME LISTENER ──────────────────────────────────────────
+  onSnapshot(stateRef, snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    if (d.date !== TODAY) return;
+    const remoteActive = d.active || {};
+    for (let k in remoteActive) remoteActive[k].entry = new Date(remoteActive[k].entry);
+    active = remoteActive;
+    history = d.history || [];
+    totalEntries = d.totalEntries || 0;
+    reports = d.reports || [];
+    render();
+    setSyncStatus('ok');
+  });
+
+  onSnapshot(configRef, snap => {
+    if (!snap.exists()) return;
+    const c = snap.data();
+    configRate = c.configRate || 20;
+    configFrac = c.configFrac !== undefined ? c.configFrac : 0;
+    updateConfigDisplay();
+  });
+
+  // ── CLOCK ──────────────────────────────────────────────────────
+  function updateClock() {
+    const n = new Date();
+    document.getElementById('clock').textContent = n.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('dateLabel').textContent = n.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ── CONFIG UI ──────────────────────────────────────────────────
+  function updateConfigDisplay() {
+    document.getElementById('rateDisplay').textContent = configRate;
+    document.getElementById('fracDisplay').textContent = FRAC_LABELS[String(configFrac)] || 'Por minuto completo';
+  }
+  function unlockConfig() {
+    document.getElementById('configLockedInfo').style.display = 'none';
+    document.querySelector('.btn-unlock').style.display = 'none';
+    document.getElementById('configEdit').style.display = 'flex';
+  }
+  function lockConfig() {
+    document.getElementById('configLockedInfo').style.display = '';
+    document.querySelector('.btn-unlock').style.display = '';
+    document.getElementById('configEdit').style.display = 'none';
+  }
+  window.lockConfig = lockConfig;
+  window.unlockConfig = unlockConfig;
+
+  // ── PASSWORD ───────────────────────────────────────────────────
+  function askUnlock(purpose) {
+    pwPurpose = purpose;
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwError').style.display = 'none';
+    document.getElementById('pwOverlay').classList.add('show');
+    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+  }
+  function checkPassword() {
+    if (document.getElementById('pwInput').value === PASSWORD) {
+      closePwModal();
+      pwPurpose === 'closeday' ? openCloseDayModal() : unlockConfig();
+    } else {
+      document.getElementById('pwError').style.display = 'block';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  }
+  function closePwModal() { document.getElementById('pwOverlay').classList.remove('show'); }
+  window.askUnlock = askUnlock;
+  window.checkPassword = checkPassword;
+  window.closePwModal = closePwModal;
+
+  // ── BILLING ────────────────────────────────────────────────────
+  function calcBill(elapsedMs) {
+    const minsCeil = Math.ceil(elapsedMs / 60000) || 1;
+    const hours = configFrac === 0 ? minsCeil / 60 : Math.ceil((minsCeil / 60) / configFrac) * configFrac;
+    return Math.round(hours * configRate);
+  }
+
+  // ── PROCESS ───────────────────────────────────────────────────
+  function processCode(raw) {
+    const match = String(raw).match(/\d+/g);
+    if (!match) return showFlash('Código no reconocido: ' + raw, 'error');
+    const code = match[match.length - 1];
+    const now = Date.now();
+    if (code === lastScanned && now - lastScannedTime < 3000) return;
+    lastScanned = code;
+    lastScannedTime = now;
+    active[code] ? processExit(code) : processEntry(code);
+  }
+
+  function processEntry(code) {
+    const now = new Date();
+    active[code] = { entry: now, entryStr: formatTime(now) };
+    totalEntries++;
+    showEntryTicket(code, now);
+    render();
+    saveState();
+  }
+
+  function processExit(code) {
+    const rec = active[code];
+    const entry = new Date(rec.entry);
+    const exit = new Date();
+    const elapsedMs = exit - entry;
+    const hoursRaw = elapsedMs / 3600000;
+    const total = calcBill(elapsedMs);
+    const minsCeil = Math.ceil(elapsedMs / 60000) || 1;
+    const record = { code, entryStr: rec.entryStr, exitStr: formatTime(exit), hours: (minsCeil / 60).toFixed(2), total };
+    history.unshift(record);
+    delete active[code];
+    showExitTicket(code, rec.entryStr, formatTime(exit), hoursRaw, total, minsCeil);
+    render();
+    saveState();
+  }
+
+  function processManual() {
+    const val = parseInt(document.getElementById('manualCode').value.trim());
+    if (!val) return;
+    if (val < 100 || val > 200) return showFlash('⚠️ La ficha debe ser un número del 100 al 200.', 'error');
+    processCode(val);
+    document.getElementById('manualCode').value = '';
+  }
+  window.processManual = processManual;
+
+  // ── TICKETS ────────────────────────────────────────────────────
+  function showEntryTicket(code, now) {
+    document.getElementById('et-ficha').textContent = code;
+    document.getElementById('et-fecha').textContent = now.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('et-hora').textContent = formatTime(now);
+    document.getElementById('entryScreen').classList.add('show');
+  }
+  function showExitTicket(code, entryStr, exitStr, hoursRaw, total, mins) {
+    document.getElementById('xt-ficha').textContent = code;
+    document.getElementById('xt-entrada').textContent = entryStr;
+    document.getElementById('xt-salida').textContent = exitStr;
+    document.getElementById('xt-tiempo').textContent = formatDuration(hoursRaw);
+    document.getElementById('xt-total').textContent = '$' + total;
+    document.getElementById('xt-sub').textContent = `${mins} min cobrados · $${configRate}/hr`;
+    document.getElementById('exitScreen').classList.add('show');
+  }
+  function closeTicket(type) { document.getElementById(type === 'entry' ? 'entryScreen' : 'exitScreen').classList.remove('show'); }
+  window.closeTicket = closeTicket;
+
+  // ── FLASH ──────────────────────────────────────────────────────
+  let flashTimer;
+  function showFlash(msg, type) {
+    const el = document.getElementById('flash');
+    el.innerHTML = msg;
+    el.className = type;
+    el.style.display = 'block';
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  // ── RENDER ─────────────────────────────────────────────────────
+  function render() { renderGrid(); renderHistory(); renderSummary(); renderReports(); }
+
+  function renderGrid() {
+    const grid = document.getElementById('spotsGrid');
+    const count = Object.keys(active).length;
+    document.getElementById('activeCount').textContent = count;
+    if (count === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🚗</div>Sin vehículos activos</div>`;
+      return;
+    }
+    grid.innerHTML = Object.entries(active).map(([code, rec]) => {
+      const elapsedMs = Date.now() - new Date(rec.entry);
+      const elapsed = elapsedMs / 3600000;
+      const secsInMin = Math.floor((elapsedMs / 1000) % 60);
+      const secsLeft = secsInMin === 0 ? 0 : 60 - secsInMin;
+      const est = calcBill(elapsedMs);
+      const secsTag = secsLeft > 0 ? `<span class="spot-secs">(+${secsLeft}s)</span>` : '';
+      return `<div class="spot-card"><div class="dot"></div>
+        <div class="spot-num">${code}</div>
+        <div class="spot-time">Entrada: ${rec.entryStr}</div>
+        <div class="spot-elapsed">⏱ ${formatDuration(elapsed)}</div>
+        <div class="spot-est">~$${est} ${secsTag}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderHistory() {
+    const tbody = document.getElementById('histBody');
+    if (history.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">📋</div>Sin registros aún</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = history.map(r => `<tr>
+      <td><strong style="color:var(--accent)">${r.code}</strong></td>
+      <td>${r.entryStr}</td><td>${r.exitStr}</td><td>${r.hours}h</td>
+      <td class="total-amount">$${r.total} <span class="chip paid">✓</span></td>
+    </tr>`).join('');
+  }
+
+  function renderSummary() {
+    const income = history.reduce((s, r) => s + parseFloat(r.total), 0);
+    document.getElementById('sumActive').textContent = Object.keys(active).length;
+    document.getElementById('sumEntries').textContent = totalEntries;
+    document.getElementById('sumToday').textContent = history.length;
+    document.getElementById('sumIncome').textContent = '$' + income.toFixed(0);
+  }
+
+  function renderReports() {
+    if (reports.length === 0) { document.getElementById('reportsSection').style.display = 'none'; return; }
+    document.getElementById('reportsSection').style.display = 'block';
+    document.getElementById('reportsList').innerHTML = reports.map(r => `
+      <div class="report-card">
+        <span class="report-date">📅 ${r.date}</span>
+        <div class="report-stats">
+          <span>Entradas: <strong>${r.entries}</strong></span>
+          <span>Salidas: <strong>${r.exits}</strong></span>
+          ${r.pending > 0 ? `<span style="color:var(--accent2)">Pendientes: <strong>${r.pending}</strong></span>` : ''}
+          <span>Total: <strong style="color:var(--green)">$${r.income}</strong></span>
+        </div>
+      </div>`).join('');
+  }
+
+  // Actualizar tarjetas de activos cada segundo
+  setInterval(() => { if (Object.keys(active).length) renderGrid(); }, 1000);
+
+  // ── CLOSE DAY ──────────────────────────────────────────────────
+  function openCloseDayModal() {
+    const income = history.reduce((s, r) => s + parseFloat(r.total), 0);
+    const pending = Object.keys(active).length;
+    document.getElementById('mEntries').textContent = totalEntries;
+    document.getElementById('mExits').textContent = history.length;
+    document.getElementById('mActive').textContent = pending;
+    document.getElementById('mIncome').textContent = '$' + income.toFixed(0);
+    document.getElementById('modalDate').textContent = new Date().toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('mNote').innerHTML = pending > 0
+      ? `<span>⚠️ Hay ${pending} vehículo(s) aún adentro.</span> Quedarán como pendientes en el reporte.`
+      : `✅ Todos los vehículos han salido. Se guardará el reporte y se limpiará la pantalla.`;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+  async function confirmCloseDay() {
+    const income = history.reduce((s, r) => s + parseFloat(r.total), 0);
+    const rep = {
+      date: new Date().toLocaleDateString('es-MX', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }),
+      entries: totalEntries,
+      exits: history.length,
+      income: income.toFixed(0),
+      pending: Object.keys(active).length
+    };
+    reports.unshift(rep);
+    active = {}; history = []; totalEntries = 0;
+    closeModal();
+    render();
+    await saveState();
+    showFlash(`✅ Día cerrado · $${income.toFixed(0)} cobrados · ${rep.exits} salidas`, 'entry');
+  }
+  window.openCloseDayModal = openCloseDayModal;
+  window.closeModal = closeModal;
+  window.confirmCloseDay = confirmCloseDay;
+
+  // ── SCANNER ────────────────────────────────────────────────────
+  function startScanner() {
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('stopBtn').style.display = 'inline-block';
+    scanner = new Html5Qrcode("reader");
+    scanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 220, height: 220 } },
+      text => processCode(text),
+      () => {}
+    ).catch(err => { showFlash('Error al abrir cámara: ' + err, 'error'); stopScanner(); });
+  }
+  function stopScanner() {
+    if (scanner) { scanner.stop().catch(() => {}); scanner = null; }
+    document.getElementById('startBtn').style.display = 'inline-block';
+    document.getElementById('stopBtn').style.display = 'none';
+  }
+  window.startScanner = startScanner;
+  window.stopScanner = stopScanner;
+
+  // ── HELPERS ────────────────────────────────────────────────────
+  function formatTime(d) { return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+  function formatDuration(h) {
+    const hh = Math.floor(h), mm = Math.round((h - hh) * 60);
+    if (hh === 0) return `${mm} min`;
+    return mm > 0 ? `${hh}h ${mm}min` : `${hh}h`;
+  }
+
+  // ── INIT ───────────────────────────────────────────────────────
+  document.getElementById('manualCode').addEventListener('keydown', e => { if (e.key === 'Enter') processManual(); });
+  document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.getElementById('pwOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closePwModal(); });
+  loadAll();
+</script>
+
+</body>
+</html>
