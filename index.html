@@ -1,1 +1,1576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<title>LUMY-V</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#1e40af;--blue2:#1d4ed8;--blue-light:#dbeafe;--blue-glow:rgba(37,99,235,0.18);
+  --cyan:#0891b2;--emerald:#059669;--amber:#d97706;--rose:#e11d48;--violet:#7c3aed;
+  --bg:#f1f5f9;--surface:#ffffff;--surface2:#f8faff;--border:#e2e8f0;
+  --text:#0f172a;--text2:#334155;--text3:#64748b;
+  --header:72px;--radius:14px;--radius-lg:20px;--radius-xl:28px;
+  --shadow:0 1px 4px rgba(15,23,42,0.08),0 4px 16px rgba(30,64,175,0.08);
+  --shadow-lg:0 8px 32px rgba(30,64,175,0.13),0 2px 8px rgba(15,23,42,0.07);
+  --sidebar-w:320px;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'DM Serif Display',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overscroll-behavior:none;font-size:15px;line-height:1.5;}
 
+@media(min-width:768px){
+  .container{padding:28px 32px 64px;}
+  .summary{grid-template-columns:repeat(4,1fr);}
+  .spots-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+}
+@media(min-width:1024px){
+  .container{max-width:960px;}
+  header{padding:0 40px;}
+}
+
+header{
+  height:var(--header);
+  background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e40af 100%);
+  padding:0 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;gap:12px;
+  box-shadow:0 4px 24px rgba(37,99,235,0.3);
+}
+header::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.hd-logo{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
+.logo-badge{width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,0.4);}
+.hd-brand-name{font-family:var(--font-display);font-size:1.5rem;font-style:italic;color:#fff;letter-spacing:1px;line-height:1;}
+.hd-brand-sub{font-size:0.55rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-top:4px;font-weight:600;}
+.hd-right{display:flex;align-items:center;gap:8px;position:relative;z-index:1;}
+.sync-pill{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 12px;font-size:0.62rem;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all 0.3s;font-weight:500;}
+.sync-pill.ok{color:#34d399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);}
+.sync-pill.syncing{color:#fbbf24;border-color:rgba(251,191,36,0.3);}
+.online-dot{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399;animation:pulse 2s infinite;flex-shrink:0;}
+.hd-clock{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:5px 12px;text-align:right;}
+#clock{font-family:var(--font-display);font-size:1.05rem;color:#fff;line-height:1;font-style:italic;}
+#dateLabel{font-size:0.52rem;color:rgba(255,255,255,0.45);margin-top:2px;letter-spacing:0.5px;}
+
+.hd-menu-btn{width:44px;height:44px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all 0.2s;position:relative;z-index:1;flex-shrink:0;}
+.hd-menu-btn:hover{background:rgba(255,255,255,0.14);}
+.hd-menu-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s;}
+.hd-menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hd-menu-btn.open span:nth-child(2){opacity:0;}
+.hd-menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+.sidebar-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px);}
+.sidebar-overlay.show{opacity:1;pointer-events:all;}
+.sidebar{position:fixed;top:0;right:0;width:var(--sidebar-w);max-width:90vw;height:100%;background:linear-gradient(160deg,#0f172a 0%,#1e3a5f 60%,#1e1b4b 100%);z-index:200;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,0.4);}
+.sidebar.open{transform:translateX(0);}
+.sidebar-header{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo{font-family:var(--font-display);font-size:1.5rem;font-style:italic;color:#fff;letter-spacing:1px;}
+.sidebar-sub{font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:4px;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:16px 0;}
+.sidebar-section-label{font-size:0.62rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:16px 24px 8px;font-weight:700;}
+.sidebar-item{display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;transition:all 0.2s;border:none;background:none;width:100%;text-align:left;position:relative;overflow:hidden;}
+.sidebar-item::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.04);opacity:0;transition:opacity 0.2s;}
+.sidebar-item:hover::before{opacity:1;}
+.sidebar-item:active{transform:scale(0.98);}
+.sidebar-item-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.sidebar-item-icon.blue{background:linear-gradient(135deg,rgba(37,99,235,0.3),rgba(37,99,235,0.15));border:1px solid rgba(37,99,235,0.3);}
+.sidebar-item-icon.emerald{background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(16,185,129,0.12));border:1px solid rgba(16,185,129,0.25);}
+.sidebar-item-icon.amber{background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(245,158,11,0.12));border:1px solid rgba(245,158,11,0.25);}
+.sidebar-item-icon.violet{background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(139,92,246,0.12));border:1px solid rgba(139,92,246,0.25);}
+.sidebar-item-icon.rose{background:linear-gradient(135deg,rgba(244,63,94,0.2),rgba(244,63,94,0.08));border:1px solid rgba(244,63,94,0.2);}
+.sidebar-item-text{flex:1;}
+.sidebar-item-title{font-size:0.9rem;font-weight:700;color:#fff;line-height:1.2;}
+.sidebar-item-desc{font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:3px;}
+.sidebar-arrow{font-size:0.75rem;color:rgba(255,255,255,0.2);}
+.sidebar-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 24px;}
+.sidebar-footer{padding:20px 24px;border-top:1px solid rgba(255,255,255,0.08);}
+.sidebar-version{font-size:0.6rem;color:rgba(255,255,255,0.2);letter-spacing:1px;}
+
+.container{max-width:880px;margin:0 auto;padding:20px 14px 48px;}
+
+#flash{border-radius:var(--radius);padding:13px 16px;margin-bottom:16px;font-size:0.85rem;font-weight:600;display:none;animation:slideDown 0.3s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+#flash.entry{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);color:#059669;}
+#flash.exit{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);color:#d97706;}
+#flash.error{background:linear-gradient(135deg,rgba(244,63,94,0.1),rgba(244,63,94,0.05));border:1px solid rgba(244,63,94,0.3);color:#e11d48;}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.section-title{font-family:var(--font-body);font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px;}
+.badge{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-size:0.65rem;padding:2px 10px;border-radius:20px;font-weight:700;font-family:var(--font-body);}
+
+.tariff-info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.tariff-info-inner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.tariff-info-icon{width:36px;height:36px;background:linear-gradient(135deg,#dbeafe,#ede9fe);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.tariff-info-text{font-size:0.78rem;color:var(--text2);line-height:1.7;flex:1;}
+.tariff-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(30,64,175,0.06);border:1px solid rgba(30,64,175,0.15);border-radius:20px;padding:3px 10px;font-size:0.68rem;font-weight:700;color:var(--blue);margin:2px;letter-spacing:0.3px;}
+
+.scanner-card{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-radius:var(--radius-xl);padding:24px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.scanner-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(37,99,235,0.3),transparent 70%);pointer-events:none;}
+.scanner-card::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(124,58,237,0.2),transparent 70%);pointer-events:none;}
+.scanner-inner{display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;z-index:1;}
+.scanner-label{font-family:var(--font-display);font-size:0.7rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);align-self:flex-start;}
+#reader{border-radius:16px;overflow:hidden;width:100%;max-width:280px;border:2px solid rgba(37,99,235,0.4);}
+.scanner-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.btn-primary{background:linear-gradient(135deg,#1e40af,#4f46e5);color:#fff;border:none;padding:13px 32px;border-radius:12px;font-family:var(--font-body);font-size:0.88rem;font-weight:700;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(30,64,175,0.35);}
+.btn-primary:active{opacity:0.85;transform:scale(0.98);}
+.btn-stop{background:rgba(244,63,94,0.1);color:#f43f5e;border:1.5px solid rgba(244,63,94,0.3);padding:12px 24px;border-radius:12px;font-family:var(--font-display);font-size:0.85rem;font-weight:700;cursor:pointer;}
+.manual-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);}
+.manual-lbl{font-size:0.7rem;color:rgba(255,255,255,0.4);font-weight:500;}
+.manual-input{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);color:#fff;padding:10px 14px;border-radius:10px;font-size:0.95rem;font-family:var(--font-body);width:110px;text-align:center;font-weight:600;}
+.manual-input:focus{outline:none;border-color:rgba(37,99,235,0.6);background:rgba(37,99,235,0.12);}
+.manual-input::placeholder{color:rgba(255,255,255,0.25);}
+.btn-register{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.18);padding:10px 18px;border-radius:10px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-register:hover{background:rgba(37,99,235,0.3);border-color:rgba(37,99,235,0.5);}
+
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-1px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0;}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.stat-card.violet::before{background:linear-gradient(90deg,var(--violet),#ec4899);}
+.stat-card.emerald::before{background:linear-gradient(90deg,var(--emerald),var(--cyan));}
+.stat-card.amber::before{background:linear-gradient(90deg,var(--amber),#f97316);}
+.stat-val{font-family:var(--font-display);font-size:2rem;line-height:1;margin-bottom:6px;}
+.stat-card.blue .stat-val{color:var(--blue);}
+.stat-card.violet .stat-val{color:var(--violet);}
+.stat-card.emerald .stat-val{color:var(--emerald);}
+.stat-card.amber .stat-val{color:var(--amber);}
+.stat-lbl{font-size:0.65rem;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;}
+.income-locked{cursor:pointer;position:relative;}
+
+.spots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:24px;}
+.spot-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;position:relative;overflow:hidden;box-shadow:var(--shadow);transition:all 0.2s;}
+.spot-card:hover{border-color:rgba(37,99,235,0.3);box-shadow:var(--shadow-lg);}
+.spot-card textarea:focus{position:relative;z-index:10;}
+.spot-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(37,99,235,0.06),transparent 70%);pointer-events:none;}
+.spot-num{font-family:var(--font-display);font-size:2.6rem;color:var(--blue);line-height:1;font-style:italic;}
+.spot-type-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:0.62rem;font-weight:700;margin:5px 0;letter-spacing:0.5px;}
+.spot-type-badge.auto{background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.2);}
+.spot-type-badge.moto{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+.spot-time{font-size:0.65rem;color:var(--text3);font-weight:500;}
+.spot-elapsed{font-size:0.82rem;color:var(--text2);font-weight:700;margin-top:2px;}
+.spot-est{font-size:0.88rem;color:var(--blue);font-weight:800;margin-top:6px;}
+.spot-billing-note{font-size:0.6rem;color:var(--text3);margin-top:2px;}
+.spot-note-input{width:100%;background:rgba(37,99,235,0.06);border:1.5px solid var(--border);border-radius:8px;padding:7px 9px;font-size:0.75rem;font-family:var(--font-body);color:var(--text);margin-top:7px;resize:none;word-break:break-word;white-space:pre-wrap;line-height:1.5;min-height:36px;overflow:hidden;}
+.spot-note-input:focus{outline:none;border-color:var(--blue);background:rgba(37,99,235,0.09);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);position:absolute;top:12px;left:12px;box-shadow:0 0 0 2px rgba(16,185,129,0.2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:0.3;display:block;}
+.empty-text{font-size:0.82rem;font-weight:500;}
+
+.history-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+thead{background:linear-gradient(135deg,#f8faff,#f0f4ff);}
+th{padding:13px 16px;font-family:var(--font-body);font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);text-align:left;border-bottom:1px solid var(--border);}
+td{padding:13px 16px;font-size:0.82rem;border-bottom:1px solid #f1f5f9;vertical-align:middle;color:var(--text2);font-weight:500;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(37,99,235,0.02);}
+.ficha-num{font-family:var(--font-display);font-size:1.1rem;color:var(--blue);font-style:italic;}
+.total-chip{font-weight:700;color:var(--emerald);display:flex;align-items:center;gap:5px;}
+.paid-badge{background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.2);padding:2px 7px;border-radius:20px;font-size:0.6rem;font-weight:700;}
+
+.ticket-screen{display:none;position:fixed;inset:0;z-index:250;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.ticket-screen.show{display:flex;}
+.entry-screen{background:linear-gradient(160deg,#0f172a 0%,#064e3b 50%,#065f46 100%);}
+.exit-screen{background:linear-gradient(160deg,#0f172a 0%,#1e3a5f 50%,#1e1b4b 100%);}
+.ticket-glow{position:absolute;width:300px;height:300px;border-radius:50%;filter:blur(60px);top:5%;left:50%;transform:translateX(-50%);pointer-events:none;}
+.entry-screen .ticket-glow{background:rgba(16,185,129,0.12);}
+.exit-screen .ticket-glow{background:rgba(37,99,235,0.12);}
+.ticket-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:28px 24px;width:100%;max-width:340px;text-align:center;backdrop-filter:blur(20px);animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+@keyframes popIn{from{opacity:0;transform:scale(0.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.ticket-logo{width:50px;height:50px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.4rem;}
+.ticket-brand{font-family:var(--font-display);font-size:0.6rem;letter-spacing:4px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:10px;}
+.ticket-status-pill{display:inline-block;padding:5px 14px;border-radius:30px;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:18px;}
+.entry-screen .ticket-status-pill{background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(52,211,153,0.25);}
+.exit-screen .ticket-status-pill{background:rgba(37,99,235,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.25);}
+.ticket-ficha-label{font-size:0.55rem;color:rgba(255,255,255,0.35);letter-spacing:3px;text-transform:uppercase;}
+.ticket-ficha{font-family:var(--font-display);font-size:5.5rem;line-height:1;margin:2px 0 6px;font-style:italic;}
+.entry-screen .ticket-ficha{color:#34d399;}
+.exit-screen .ticket-ficha{color:#60a5fa;}
+.ticket-div{border:none;border-top:1px dashed rgba(255,255,255,0.1);margin:16px 0;}
+.ticket-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ticket-row-label{font-size:0.68rem;color:rgba(255,255,255,0.4);font-weight:500;}
+.ticket-row-val{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.9);}
+.ticket-total-block{margin-top:16px;padding:16px;border-radius:14px;}
+.exit-screen .ticket-total-block{background:rgba(37,99,235,0.1);border:1px solid rgba(96,165,250,0.2);}
+.ticket-total-label{font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:6px;}
+.ticket-total-amt{font-family:var(--font-display);font-size:3.8rem;color:#60a5fa;line-height:1;font-style:italic;}
+.ticket-total-sub{font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:6px;}
+.ticket-welcome{margin-top:16px;padding:12px;border-radius:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(52,211,153,0.18);}
+.ticket-welcome-txt{font-size:0.85rem;color:#34d399;font-weight:600;}
+.ticket-welcome-sub{font-size:0.65rem;color:rgba(255,255,255,0.35);margin-top:3px;}
+.ticket-back-btn{margin-top:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:12px 36px;border-radius:50px;font-family:var(--font-body);font-size:0.88rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
+.ticket-back-btn:active{background:rgba(255,255,255,0.12);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.75);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;max-width:480px;width:100%;animation:popIn 0.3s ease;box-shadow:0 32px 80px rgba(15,23,42,0.2);}
+.modal-icon{font-size:2.5rem;text-align:center;margin-bottom:10px;}
+.modal h2{font-family:var(--font-display);font-size:1.5rem;color:var(--text);margin-bottom:4px;font-style:italic;}
+.modal-date{font-size:0.72rem;color:var(--text3);margin-bottom:18px;font-weight:500;}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.modal-stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;}
+.modal-stat .mval{font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--text);}
+.modal-stat .mlbl{font-size:0.62rem;color:var(--text3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.modal-stat.highlight .mval{color:var(--emerald);}
+.modal-stat.highlight{border-color:rgba(16,185,129,0.25);}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.modal-note{font-size:0.78rem;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.modal-note span{color:var(--amber);font-weight:600;}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-modal-cancel{background:var(--bg);color:var(--text2);border:1.5px solid var(--border);padding:10px 18px;border-radius:10px;font-family:var(--font-body);font-size:0.85rem;font-weight:600;cursor:pointer;}
+.btn-modal-danger{background:linear-gradient(135deg,var(--rose),#e11d48);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-family:var(--font-display);font-size:0.88rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-modal-confirm{background:linear-gradient(135deg,var(--emerald),#059669);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-family:var(--font-display);font-size:0.88rem;font-weight:700;letter-spacing:0.5px;cursor:pointer;}
+
+.pw-modal{max-width:340px;}
+.pw-modal h2{color:var(--violet);}
+.pw-input{background:var(--bg);border:1.5px solid var(--border);color:var(--text);padding:13px 16px;border-radius:12px;font-size:1rem;font-family:var(--font-body);width:100%;margin:14px 0;font-weight:500;}
+.pw-input:focus{outline:none;border-color:var(--blue);}
+.pw-error{color:var(--rose);font-size:0.75rem;margin-top:-8px;margin-bottom:12px;display:none;font-weight:600;}
+.btn-pw-enter{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:11px 22px;border-radius:10px;font-family:var(--font-display);font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+
+.vtype-modal{max-width:340px;}
+.vtype-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.vtype-btn{border:2px solid var(--border);background:var(--bg);border-radius:var(--radius);padding:20px 10px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.vtype-btn .vtype-icon{font-size:2.4rem;display:block;margin-bottom:8px;}
+.vtype-btn .vtype-name{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--text);}
+.vtype-btn .vtype-rate{font-size:0.65rem;color:var(--text3);margin-top:4px;font-weight:600;line-height:1.5;}
+.vtype-btn.auto-btn:hover{border-color:var(--emerald);background:rgba(16,185,129,0.05);}
+.vtype-btn.moto-btn:hover{border-color:var(--amber);background:rgba(245,158,11,0.05);}
+
+.exit-confirm-modal{max-width:320px;text-align:center;}
+
+.sidebar-rates-form{padding:0 0 16px;}
+.srf-field{margin-bottom:14px;}
+.srf-label{font-size:0.68rem;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase;}
+.srf-input{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);color:#fff;padding:10px 14px;border-radius:10px;font-size:0.9rem;font-family:var(--font-body);width:100%;font-weight:600;}
+.srf-input:focus{outline:none;border-color:rgba(37,99,235,0.6);}
+.srf-note{font-size:0.65rem;color:rgba(255,255,255,0.3);margin-top:5px;line-height:1.5;}
+.btn-srf-save{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-family:var(--font-display);font-size:0.85rem;font-weight:700;cursor:pointer;width:100%;margin-top:4px;}
+.btn-srf-cancel{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);padding:10px 24px;border-radius:10px;font-family:var(--font-body);font-size:0.82rem;font-weight:600;cursor:pointer;width:100%;margin-top:8px;}
+
+.trust-panel{padding:0;}
+.trust-status-block{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;}
+.trust-status-icon{font-size:2.5rem;margin-bottom:8px;}
+.trust-status-text{font-size:0.85rem;font-weight:600;color:#fff;}
+.trust-status-sub{font-size:0.65rem;color:rgba(255,255,255,0.35);margin-top:4px;}
+.btn-trust-action{padding:12px 24px;border-radius:10px;font-family:var(--font-body);font-size:0.85rem;font-weight:700;cursor:pointer;width:100%;border:none;margin-bottom:8px;}
+.btn-trust-mark{background:linear-gradient(135deg,var(--emerald),#059669);color:#fff;}
+.btn-trust-remove{background:rgba(244,63,94,0.12);color:#f43f5e;border:1.5px solid rgba(244,63,94,0.3)!important;}
+
+#loadingOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#1e3a5f);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loading-logo{font-family:var(--font-display);font-size:3rem;font-style:italic;color:#fff;letter-spacing:2px;}
+.loading-sub{font-size:0.65rem;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;}
+.loading-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.1);border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e1b4b 100%);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:24px;}
+#loginScreen.hidden{display:none;}
+#loginScreen::before{content:'';position:absolute;top:20%;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,0.15),transparent 70%);pointer-events:none;}
+.login-brand{text-align:center;position:relative;z-index:1;}
+.login-logo{font-family:var(--font-display);font-size:3.5rem;font-style:italic;background:linear-gradient(135deg,#60a5fa,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.login-tagline{font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:6px;}
+.login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-xl);padding:28px;width:100%;max-width:340px;backdrop-filter:blur(20px);position:relative;z-index:1;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+.login-card h3{font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.8);text-align:center;margin-bottom:18px;}
+.login-input{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);color:#fff;padding:14px 16px;border-radius:12px;font-size:1rem;font-family:var(--font-body);width:100%;margin-bottom:10px;font-weight:500;}
+.login-input:focus{outline:none;border-color:rgba(37,99,235,0.6);background:rgba(37,99,235,0.1);}
+.login-input::placeholder{color:rgba(255,255,255,0.25);}
+.login-error{color:#f87171;font-size:0.75rem;text-align:center;margin-bottom:10px;display:none;font-weight:500;}
+.login-btn{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;padding:14px;border-radius:12px;font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:2px;cursor:pointer;width:100%;transition:all 0.2s;box-shadow:0 4px 20px rgba(37,99,235,0.4);}
+.login-btn:active{transform:scale(0.98);opacity:0.9;}
+
+@media(min-width:768px){
+  .spots-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));}
+  .stat-val{font-size:2.4rem;}
+  .stat-lbl{font-size:0.7rem;}
+  .spot-num{font-size:3rem;}
+  th,td{padding:14px 18px;}
+  .scanner-card{padding:32px;}
+  #reader{max-width:340px;}
+  .tariff-info-card{padding:20px 24px;}
+}
+@media(min-width:1024px){
+  .summary{grid-template-columns:repeat(4,1fr);}
+  .spots-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
+}
+@media(max-width:520px){
+  .summary{grid-template-columns:repeat(2,1fr);}
+  .hd-brand-name{font-size:1.2rem;}
+  th,td{padding:10px 10px;font-size:0.76rem;}
+  .ticket-ficha{font-size:4rem;}
+  .ticket-total-amt{font-size:2.8rem;}
+  .sync-pill{display:none;}
+  .stat-val{font-size:1.7rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-brand">
+    <div class="login-logo">LUMY‑V</div>
+    <div class="login-tagline">Sistema de Estacionamiento</div>
+  </div>
+  <div class="login-card">
+    <h3>🔐 Acceso</h3>
+    <input type="password" id="loginInput" class="login-input" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-error" id="loginError">Contraseña incorrecta. Intenta de nuevo.</div>
+    <button class="login-btn" onclick="doLogin()">ENTRAR</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loadingOverlay">
+  <div class="loading-logo">LUMY‑V</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-sub">Conectando...</div>
+</div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">LUMY‑V</div>
+    <div class="sidebar-sub">Panel de administración</div>
+  </div>
+  <div class="sidebar-nav" id="sidebarNav">
+    <div id="sidebarMain">
+      <div class="sidebar-section-label">General</div>
+      <button class="sidebar-item" onclick="sidebarGo('income')">
+        <div class="sidebar-item-icon amber">💰</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Cobrado hoy</div>
+          <div class="sidebar-item-desc">Ver ingresos del día</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label">Configuración</div>
+      <button class="sidebar-item" onclick="sidebarGo('rates')">
+        <div class="sidebar-item-icon blue">⚙️</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Modificar tarifas</div>
+          <div class="sidebar-item-desc">Precios y horarios</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <button class="sidebar-item" onclick="sidebarGo('trust')">
+        <div class="sidebar-item-icon violet">📱</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Dispositivo de confianza</div>
+          <div class="sidebar-item-desc">Omitir contraseña al entrar</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label">Reportes</div>
+      <button class="sidebar-item" onclick="sidebarGo('reports')">
+        <div class="sidebar-item-icon emerald">📁</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Días previos</div>
+          <div class="sidebar-item-desc">Historial de cierres</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+      <button class="sidebar-item" onclick="sidebarGo('closeday')">
+        <div class="sidebar-item-icon rose">🔒</div>
+        <div class="sidebar-item-text">
+          <div class="sidebar-item-title">Cerrar día</div>
+          <div class="sidebar-item-desc">Guardar y reiniciar</div>
+        </div>
+        <span class="sidebar-arrow">›</span>
+      </button>
+    </div>
+
+    <!-- Rates sub-panel -->
+    <div id="sidebarRates" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:var(--font-display);font-size:1rem;color:#fff;margin-bottom:4px;">Tarifas</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:18px;line-height:1.6;">Configura los precios del estacionamiento.</div>
+      <div class="sidebar-rates-form">
+        <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🚗 Automóvil</div>
+        <div class="srf-field">
+          <label class="srf-label">Tarifa por hora ($)</label>
+          <input type="number" id="srfRateAuto" class="srf-input" value="20" min="1">
+        </div>
+        <div class="srf-field">
+          <label class="srf-label">Monto máximo (5h+) ($)</label>
+          <input type="number" id="srfMaxAuto" class="srf-input" value="80" min="1">
+        </div>
+        <div class="srf-field" style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;">
+          <div>
+            <div style="font-size:0.8rem;font-weight:700;color:#fff;">3ª hora gratis</div>
+            <div style="font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:2px;">Horas 2h–3h sin costo</div>
+          </div>
+          <div id="freeHourToggle" onclick="toggleFreeHour()" style="width:44px;height:24px;background:#10b981;border-radius:12px;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;">
+            <div id="freeHourKnob" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:22px;transition:left 0.3s;"></div>
+          </div>
+        </div>
+        <div style="font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;margin:14px 0 10px;">🏍️ Moto / Mototaxi</div>
+        <div class="srf-field">
+          <label class="srf-label">Tarifa diurna fija 8am–5pm ($)</label>
+          <input type="number" id="srfRateMotoDay" class="srf-input" value="20" min="1">
+        </div>
+        <div class="srf-field">
+          <label class="srf-label">Tarifa hora extra nocturna ($)</label>
+          <input type="number" id="srfRateMoto" class="srf-input" value="10" min="1">
+          <div class="srf-note">• Cobro en medias horas completas</div>
+        </div>
+        <button class="btn-srf-save" onclick="saveSidebarRates()">✓ Guardar tarifas</button>
+        <button class="btn-srf-cancel" onclick="sidebarBack()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Trust sub-panel -->
+    <div id="sidebarTrust" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:var(--font-display);font-size:1rem;color:#fff;margin-bottom:4px;">Dispositivo de confianza</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:18px;line-height:1.6;">Un dispositivo de confianza no pedirá contraseña al abrir la app.</div>
+      <div class="trust-panel">
+        <div class="trust-status-block">
+          <div class="trust-status-icon" id="sbTrustIcon">📱</div>
+          <div class="trust-status-text" id="sbTrustText">No es de confianza</div>
+          <div class="trust-status-sub" id="sbTrustSub">Se pedirá contraseña cada vez que abras la app</div>
+        </div>
+        <button class="btn-trust-action btn-trust-mark" id="sbTrustBtn" onclick="handleTrust()">🔒 Marcar como confianza</button>
+      </div>
+    </div>
+
+    <!-- Reports sub-panel -->
+    <div id="sidebarReports" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:var(--font-display);font-size:1rem;color:#fff;margin-bottom:4px;">Días previos</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:14px;">Historial de cierres de día.</div>
+      <div id="sbReportsList" style="max-height:60vh;overflow-y:auto;"></div>
+    </div>
+
+    <!-- Income sub-panel -->
+    <div id="sidebarIncome" style="display:none;padding:0 24px;">
+      <button class="sidebar-item" style="padding:14px 0;gap:10px;" onclick="sidebarBack()">
+        <span style="font-size:1.1rem;color:rgba(255,255,255,0.5);">‹</span>
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:600;">Volver</span>
+      </button>
+      <div style="font-family:var(--font-display);font-size:1rem;color:#fff;margin-bottom:4px;">Cobrado hoy</div>
+      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-bottom:18px;">Ingresos del día en curso.</div>
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:24px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Total cobrado</div>
+        <div id="sbIncomeAmt" style="font-family:var(--font-display);font-size:3rem;font-style:italic;color:#34d399;">$0</div>
+        <div id="sbIncomeSub" style="font-size:0.68rem;color:rgba(255,255,255,0.3);margin-top:6px;">0 salidas registradas</div>
+      </div>
+      <div id="sbIncomeBreakdown" style="font-size:0.72rem;color:rgba(255,255,255,0.4);line-height:1.8;"></div>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <div style="font-size:0.78rem;font-weight:700;color:#fff;">🖨️ Impresión RawBT</div>
+        <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:2px;">Requiere app RawBT + Android</div>
+      </div>
+      <div id="printToggle" onclick="togglePrinting()" style="width:44px;height:24px;background:#374151;border-radius:12px;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;">
+        <div id="printToggleKnob" style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left 0.3s;"></div>
+      </div>
+    </div>
+    <div class="sidebar-version">LUMY‑V · v2.0 · Sistema de Estacionamiento</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="hd-logo">
+    <div class="logo-badge">
+      <svg viewBox="0 0 120 80" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,68 A52,52 0 0,1 12,12" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <line x1="7" y1="20" x2="16" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="5" y1="28" x2="14" y2="29" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="4" y1="36" x2="13" y2="36" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="4" y1="44" x2="13" y2="43" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <line x1="6" y1="52" x2="15" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <text x="28" y="38" font-family="Georgia,serif" font-weight="900" font-size="18" fill="#fff" letter-spacing="1">LUMY</text>
+        <line x1="78" y1="34" x2="84" y2="34" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+        <text x="86" y="38" font-family="Georgia,serif" font-weight="900" font-size="18" fill="#fff">V</text>
+        <path d="M48,44 Q54,38 62,38 Q70,38 76,44 L78,44 L78,50 L44,50 L44,44 Z" fill="rgba(255,255,255,0.7)"/>
+        <ellipse cx="50" cy="50" rx="4" ry="3" fill="rgba(255,255,255,0.4)"/>
+        <ellipse cx="72" cy="50" rx="4" ry="3" fill="rgba(255,255,255,0.4)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="hd-brand-name">LUMY‑V</div>
+      <div class="hd-brand-sub">Estacionamiento</div>
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="sync-pill" id="syncPill">☁️ Conectando</div>
+    <div class="sync-pill ok" style="gap:6px;"><div class="online-dot"></div>En línea</div>
+    <div class="hd-clock">
+      <div id="clock">00:00</div>
+      <div id="dateLabel">—</div>
+    </div>
+    <button class="hd-menu-btn" id="menuBtn" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div id="flash"></div>
+
+  <div class="tariff-info-card">
+    <div class="tariff-info-inner">
+      <div class="tariff-info-icon">💡</div>
+      <div class="tariff-info-text">
+        <span class="tariff-pill">🚗 Auto $<span id="rateAutoDisplay">20</span>/hr</span>
+        <span class="tariff-pill">· 3ª hora gratis</span>
+        <span class="tariff-pill">· Máx $80</span>
+        <span class="tariff-pill">🏍️ 8am‑5pm $20 fijo</span>
+        <span class="tariff-pill">Después $<span id="rateMotoDisplay">10</span>/hr</span>
+        <span class="tariff-pill">· Cobro ½ hora completa</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scanner-card">
+    <div class="scanner-inner">
+      <div class="scanner-label">📷 Escanear ficha QR o placa</div>
+      <div id="reader"></div>
+      <div class="scanner-btns">
+        <button class="btn-primary" id="startBtn" onclick="startScanner()">INICIAR CÁMARA</button>
+        <button class="btn-stop" id="stopBtn" onclick="stopScanner()" style="display:none">⏹ Detener</button>
+      </div>
+      <div class="manual-row">
+        <span class="manual-lbl">O ingresa número de ficha:</span>
+        <input type="number" id="manualCode" class="manual-input" placeholder="01–220" min="1" max="220">
+        <button class="btn-register" onclick="processManual()">Registrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="stat-card blue"><div class="stat-val" id="sumActive">0</div><div class="stat-lbl">Activos</div></div>
+    <div class="stat-card violet"><div class="stat-val" id="sumEntries">0</div><div class="stat-lbl">Entradas hoy</div></div>
+    <div class="stat-card emerald"><div class="stat-val" id="sumToday">0</div><div class="stat-lbl">Salidas hoy</div></div>
+    <div class="stat-card amber income-locked" onclick="sidebarGo('income')">
+      <div class="stat-val" id="sumIncome">🔒</div>
+      <div class="stat-lbl">Cobrado hoy</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">🚗 Vehículos activos <span class="badge" id="activeCount">0</span></div>
+  </div>
+  <div class="spots-grid" id="spotsGrid">
+    <div class="empty-state" style="grid-column:1/-1">
+      <span class="empty-icon">🅿️</span>
+      <div class="empty-text">Sin vehículos activos</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="section-title">📋 Historial de hoy</div>
+  </div>
+  <div class="history-wrap">
+    <table>
+      <thead><tr><th>Ficha</th><th>Tipo</th><th>Entrada</th><th>Salida</th><th>Tiempo</th><th>Total</th></tr></thead>
+      <tbody id="histBody">
+        <tr><td colspan="6"><div class="empty-state"><span class="empty-icon">📋</span><div class="empty-text">Sin registros aún</div></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Entry Ticket -->
+<div class="ticket-screen entry-screen" id="entryScreen">
+  <div class="ticket-glow"></div>
+  <div class="ticket-card">
+    <div class="ticket-logo">🅿️</div>
+    <div class="ticket-brand">LUMY‑V ESTACIONAMIENTO</div>
+    <div class="ticket-status-pill">✓ ENTRADA REGISTRADA</div>
+    <div class="ticket-ficha-label" id="et-ficha-label">FICHA</div>
+    <div class="ticket-ficha" id="et-ficha">—</div>
+    <hr class="ticket-div">
+    <div class="ticket-row"><span class="ticket-row-label">🚘 Tipo</span><span class="ticket-row-val" id="et-tipo">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">📅 Fecha</span><span class="ticket-row-val" id="et-fecha">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕐 Entrada</span><span class="ticket-row-val" id="et-hora">—</span></div>
+    <div class="ticket-welcome">
+      <div class="ticket-welcome-txt">¡Bienvenido! 👋</div>
+      <div class="ticket-welcome-sub">Conserve su ficha para la salida</div>
+    </div>
+    <div style="width:100%;margin-top:14px;">
+      <input type="text" id="entryNoteInput" placeholder="Descripción del vehículo (opcional)..." maxlength="60"
+        style="width:100%;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:#fff;padding:11px 14px;border-radius:12px;font-size:0.85rem;font-family:'DM Sans',sans-serif;outline:none;">
+    </div>
+  </div>
+  <button class="ticket-back-btn" onclick="saveEntryNote()">Guardar ✓</button>
+</div>
+
+<!-- Exit Ticket -->
+<div class="ticket-screen exit-screen" id="exitScreen">
+  <div class="ticket-glow"></div>
+  <div class="ticket-card">
+    <div class="ticket-logo">🏁</div>
+    <div class="ticket-brand">LUMY‑V ESTACIONAMIENTO</div>
+    <div class="ticket-status-pill">COBRO DE SERVICIO</div>
+    <div class="ticket-ficha-label">FICHA</div>
+    <div class="ticket-ficha" id="xt-ficha">—</div>
+    <hr class="ticket-div">
+    <div class="ticket-row"><span class="ticket-row-label">🚘 Tipo</span><span class="ticket-row-val" id="xt-tipo">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕐 Entrada</span><span class="ticket-row-val" id="xt-entrada">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">🕓 Salida</span><span class="ticket-row-val" id="xt-salida">—</span></div>
+    <div class="ticket-row"><span class="ticket-row-label">⏱ Tiempo</span><span class="ticket-row-val" id="xt-tiempo">—</span></div>
+    <div class="ticket-total-block">
+      <div class="ticket-total-label">Total a pagar</div>
+      <div class="ticket-total-amt" id="xt-total">$0</div>
+      <div class="ticket-total-sub" id="xt-sub">—</div>
+    </div>
+  </div>
+  <button class="ticket-back-btn" onclick="closeTicket('exit')">← Volver</button>
+</div>
+
+<!-- Close Day Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon">🔒</div>
+    <h2>Cierre del Día</h2>
+    <div class="modal-date" id="modalDate"></div>
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="mval" id="mEntries">0</div><div class="mlbl">Entraron</div></div>
+      <div class="modal-stat"><div class="mval" id="mExits">0</div><div class="mlbl">Salieron</div></div>
+      <div class="modal-stat"><div class="mval" id="mActive">0</div><div class="mlbl">Adentro</div></div>
+      <div class="modal-stat highlight"><div class="mval" id="mIncome">$0</div><div class="mlbl">Cobrado</div></div>
+    </div>
+    <hr class="modal-divider">
+    <div class="modal-note" id="mNote"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-modal-danger" onclick="confirmCloseDay()">✓ Confirmar cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="pwOverlay">
+  <div class="modal pw-modal">
+    <div class="modal-icon">🔑</div>
+    <h2>Contraseña</h2>
+    <p style="font-size:0.75rem;color:var(--text3);margin-top:2px;font-weight:500;">Solo el administrador puede continuar.</p>
+    <input type="password" id="pwInput" class="pw-input" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')checkPassword()">
+    <div class="pw-error" id="pwError">Contraseña incorrecta.</div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closePwModal()">Cancelar</button>
+      <button class="btn-pw-enter" onclick="checkPassword()">Entrar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vehicle Type Modal -->
+<div class="modal-overlay" id="vtypeOverlay">
+  <div class="modal vtype-modal">
+    <div class="modal-icon">🚘</div>
+    <h2>Tipo de Vehículo</h2>
+    <p style="font-size:0.75rem;color:var(--text3);margin-top:2px;font-weight:500;">Ficha <strong id="vtypeCode" style="color:var(--blue);">—</strong></p>
+    <div class="vtype-btns">
+      <div class="vtype-btn auto-btn" onclick="confirmVtype('auto')">
+        <span class="vtype-icon">🚗</span>
+        <div class="vtype-name">Auto</div>
+        <div class="vtype-rate">$<span id="vtypeRateAuto">20</span>/hr<br><small>3ª hr gratis · máx $80</small></div>
+      </div>
+      <div class="vtype-btn moto-btn" onclick="confirmVtype('moto')">
+        <span class="vtype-icon">🏍️</span>
+        <div class="vtype-name">Moto / Mototaxi</div>
+        <div class="vtype-rate">8am‑5pm: $20 fijo<br>Después: $<span id="vtypeRateMoto">10</span>/hr extra</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeVtypeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exit Confirm Modal -->
+<div class="modal-overlay" id="exitConfirmOverlay">
+  <div class="modal exit-confirm-modal">
+    <div class="modal-icon">🏁</div>
+    <h2 style="font-size:1.2rem;">¿Confirmar salida?</h2>
+    <p style="font-size:0.82rem;color:var(--text3);margin:8px 0 4px;font-weight:600;">Ficha <strong id="exitConfirmCode" style="color:var(--blue);font-size:1.1rem;">—</strong></p>
+    <p style="font-size:0.75rem;color:var(--text3);margin-bottom:20px;font-weight:500;" id="exitConfirmInfo">—</p>
+    <div class="modal-actions" style="justify-content:center;gap:12px;">
+      <button class="btn-modal-cancel" onclick="closeExitConfirm()">✕ No</button>
+      <button class="btn-modal-confirm" onclick="confirmExit()">✓ Sí, marcar salida</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, getDoc, setDoc, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyDuw1RYWsjWvNLbCc8LbsTZP6Ebo5tKvPE",
+  authDomain:"base1estacionamiento.firebaseapp.com",
+  projectId:"base1estacionamiento",
+  storageBucket:"base1estacionamiento.firebasestorage.app",
+  messagingSenderId:"423755890406",
+  appId:"1:423755890406:web:3dea7bc9372a6655728527"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
+});
+
+const PASSWORD = 'lumy1E';
+const TODAY = new Date().toISOString().slice(0,10);
+const stateRef = doc(db,'lumy','state');
+const configRef = doc(db,'lumy','config');
+
+let active={}, history=[], totalEntries=0, reports=[];
+let printingEnabled=true;
+let configRateAuto=20, configRateMoto=10, configRateMotoDay=20, configMaxAuto=80, configFreeHour=true;
+let scanner=null, lastScanned=null, lastScannedTime=0;
+let pwPurpose='sidebar', pendingCode=null, pendingPlate=null, pendingExitCode=null;
+let pendingSidebarPanel=null;
+let isModalOpen=false;
+let isSavingLocally=false;
+
+// ── BILLING ──
+function roundHalfHoursWithGrace(totalMs) {
+  const totalMins = totalMs / 60000;
+  const fullHalfHours = Math.floor(totalMins / 30);
+  const remainder = totalMins - fullHalfHours * 30;
+  return remainder >= 5 ? fullHalfHours + 1 : fullHalfHours;
+}
+
+function calcBillAuto(elapsedMs) {
+  const rate = configRateAuto;
+  const halfRate = rate / 2;
+  // maxBlocks = bloques totales para llegar al monto maximo
+  // Contamos cuantos bloques hacen falta pagando (sin los gratis)
+  // hasta llegar a configMaxAuto, luego buscamos el bloque raw equivalente
+  let paidSoFar = 0, rawBlock = 0;
+  while(paidSoFar < configMaxAuto) {
+    rawBlock++;
+    if(configFreeHour && (rawBlock === 5 || rawBlock === 6)) continue;
+    paidSoFar += halfRate;
+  }
+  const maxBlocks = rawBlock; // bloque raw donde se alcanza el maximo
+
+  const halfHoursCharged = roundHalfHoursWithGrace(elapsedMs);
+  if(halfHoursCharged === 0) return 0;
+  if(halfHoursCharged >= maxBlocks) return configMaxAuto;
+  let total = 0;
+  for(let block = 1; block <= halfHoursCharged; block++) {
+    if(configFreeHour && (block === 5 || block === 6)) continue;
+    total += halfRate;
+  }
+  return Math.min(Math.round(total), configMaxAuto);
+}
+
+function calcBillMoto(elapsedMs, entryDate) {
+  const entry = new Date(entryDate);
+  const exit = new Date(entry.getTime() + elapsedMs);
+  const rate = configRateMoto;
+  const dayRate = configRateMotoDay;
+  const limit5pm = new Date(entry);
+  limit5pm.setHours(17, 0, 0, 0);
+  if(exit <= limit5pm) return dayRate;
+  const extraStart = entry < limit5pm ? limit5pm : entry;
+  const extraMs = exit - extraStart;
+  const extraHalfHours = roundHalfHoursWithGrace(extraMs);
+  const extraCost = extraHalfHours * (rate / 2);
+  return Math.round(dayRate + extraCost);
+}
+
+function calcBill(elapsedMs, type, entryDate) {
+  if (type === 'moto') return calcBillMoto(elapsedMs, entryDate);
+  return calcBillAuto(elapsedMs);
+}
+
+function billingDescription(elapsedMs, type, entryDate) {
+  if (type === 'moto') {
+    const entry = new Date(entryDate);
+    const exit = new Date(entry.getTime() + elapsedMs);
+    const limit5pm = new Date(entry); limit5pm.setHours(17,0,0,0);
+    if (exit <= limit5pm) return 'Tarifa fija diurna (8am-5pm)';
+    const extraMs = exit - (entry < limit5pm ? limit5pm : entry);
+    const extraMins = Math.ceil(extraMs / 60000);
+    return '$'+configRateMotoDay+' base + '+Math.ceil(extraMins/30)+' x 1/2hr extra ($'+configRateMoto+'/hr)';
+  }
+  const halfHours = roundHalfHoursWithGrace(elapsedMs);
+  if (halfHours >= Math.round(configMaxAuto/(configRateAuto/2))) return 'Tarifa maxima ($'+configMaxAuto+')';
+  const freeNote = (configFreeHour && halfHours > 4) ? ' · 3a hora gratis' : '';
+  return halfHours+' x 1/2hr'+freeNote;
+}
+
+// ── SYNC ──
+function setSyncStatus(s){
+  const p=document.getElementById('syncPill');
+  if(s==='syncing'){p.textContent='🔄 Guardando';p.className='sync-pill syncing';}
+  else{p.textContent='☁️ Sincronizado';p.className='sync-pill ok';}
+}
+
+async function saveState(){
+  setSyncStatus('syncing');
+  isSavingLocally=true;
+  const activeSerial={};
+  for(let k in active) activeSerial[k]={...active[k],entry:active[k].entry instanceof Date?active[k].entry.toISOString():active[k].entry};
+  try{
+    await setDoc(stateRef,{date:TODAY,active:activeSerial,history,totalEntries,reports},{merge:false});
+    setSyncStatus('ok');
+  }catch(e){showFlash('Error al guardar: '+e.message,'error');}
+  finally{ setTimeout(()=>{ isSavingLocally=false; },2000); }
+}
+
+// ── CONFIG ──
+function updateFreeHourToggle(){
+  const tog=document.getElementById('freeHourToggle');
+  const knob=document.getElementById('freeHourKnob');
+  if(!tog||!knob) return;
+  if(configFreeHour){ tog.style.background='#10b981'; knob.style.left='22px'; }
+  else{ tog.style.background='#374151'; knob.style.left='2px'; }
+}
+function toggleFreeHour(){ configFreeHour=!configFreeHour; updateFreeHourToggle(); }
+window.toggleFreeHour=toggleFreeHour;
+
+async function saveSidebarRates(){
+  configRateAuto=parseFloat(document.getElementById('srfRateAuto').value)||20;
+  configRateMoto=parseFloat(document.getElementById('srfRateMoto').value)||10;
+  configRateMotoDay=parseFloat(document.getElementById('srfRateMotoDay').value)||20;
+  configMaxAuto=parseFloat(document.getElementById('srfMaxAuto').value)||80;
+  updateConfigDisplay();
+  try{
+    await setDoc(configRef,{configRateAuto,configRateMoto,configRateMotoDay,configMaxAuto,configFreeHour});
+    showFlash('Tarifas actualizadas','entry');
+    sidebarBack();
+  }catch(e){showFlash('Error guardando config','error');}
+}
+window.saveSidebarRates=saveSidebarRates;
+
+function updateConfigDisplay(){
+  document.getElementById('rateAutoDisplay').textContent=configRateAuto;
+  document.getElementById('rateMotoDisplay').textContent=configRateMoto;
+  document.getElementById('vtypeRateAuto').textContent=configRateAuto;
+  document.getElementById('vtypeRateMoto').textContent=configRateMoto;
+}
+
+// ── LOAD ──
+async function loadAll(){
+  try{
+    const cfgSnap=await getDoc(configRef);
+    if(cfgSnap.exists()){
+      const c=cfgSnap.data();
+      configRateAuto=c.configRateAuto||20;
+      configRateMoto=c.configRateMoto||10;
+      configRateMotoDay=c.configRateMotoDay||20;
+      configMaxAuto=c.configMaxAuto||80;
+      configFreeHour=c.configFreeHour!==undefined?c.configFreeHour:true;
+      document.getElementById('srfRateAuto').value=configRateAuto;
+      document.getElementById('srfRateMoto').value=configRateMoto;
+      document.getElementById('srfRateMotoDay').value=configRateMotoDay;
+      document.getElementById('srfMaxAuto').value=configMaxAuto;
+      updateFreeHourToggle();
+      updateConfigDisplay();
+    }
+    const stSnap=await getDoc(stateRef);
+    if(stSnap.exists()){
+      const d=stSnap.data();
+      if(d.date&&d.date!==TODAY){
+        const rep={date:d.date,entries:d.totalEntries||0,exits:(d.history||[]).length,
+          income:(d.history||[]).reduce((s,r)=>s+parseFloat(r.total||0),0).toFixed(0),
+          pending:Object.keys(d.active||{}).length};
+        reports=d.reports||[]; reports.unshift(rep);
+        active={}; history=[]; totalEntries=0;
+        await saveState();
+      }else{
+        active=d.active||{};
+        for(let k in active) active[k].entry=new Date(active[k].entry);
+        history=d.history||[]; totalEntries=d.totalEntries||0; reports=d.reports||[];
+      }
+    }
+  }catch(e){showFlash('Error al conectar: '+e.message,'error');}
+  finally{
+    document.getElementById('loadingOverlay').style.display='none';
+    setSyncStatus('ok'); render();
+  }
+}
+
+onSnapshot(stateRef,snap=>{
+  if(!snap.exists()) return;
+  const d=snap.data();
+  if(d.date!==TODAY) return;
+  if(isSavingLocally||isModalOpen) return;
+  const ra=d.active||{};
+  for(let k in ra) ra[k].entry=new Date(ra[k].entry);
+  active=ra; history=d.history||[]; totalEntries=d.totalEntries||0; reports=d.reports||[];
+  render(); setSyncStatus('ok');
+});
+
+onSnapshot(configRef,snap=>{
+  if(!snap.exists()) return;
+  const c=snap.data();
+  configRateAuto=c.configRateAuto||20; configRateMoto=c.configRateMoto||10;
+  configRateMotoDay=c.configRateMotoDay||20; configMaxAuto=c.configMaxAuto||80;
+  configFreeHour=c.configFreeHour!==undefined?c.configFreeHour:true;
+  document.getElementById('srfRateAuto').value=configRateAuto;
+  document.getElementById('srfRateMoto').value=configRateMoto;
+  document.getElementById('srfRateMotoDay').value=configRateMotoDay;
+  document.getElementById('srfMaxAuto').value=configMaxAuto;
+  updateFreeHourToggle();
+  updateConfigDisplay();
+});
+
+// ── CLOCK ──
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dateLabel').textContent=n.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'});
+}
+setInterval(updateClock,1000); updateClock();
+
+// ── SIDEBAR ──
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('sidebarOverlay');
+  const btn=document.getElementById('menuBtn');
+  if(sb.classList.contains('open')){ closeSidebar(); }
+  else{ sb.classList.add('open'); ov.classList.add('show'); btn.classList.add('open'); }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  document.getElementById('menuBtn').classList.remove('open');
+  sidebarBack();
+}
+window.toggleSidebar=toggleSidebar; window.closeSidebar=closeSidebar;
+
+function togglePrinting(){
+  printingEnabled=!printingEnabled;
+  const toggle=document.getElementById('printToggle');
+  const knob=document.getElementById('printToggleKnob');
+  if(printingEnabled){ toggle.style.background='#10b981'; knob.style.left='22px'; showFlash('Impresion activada','entry'); }
+  else{ toggle.style.background='#374151'; knob.style.left='2px'; showFlash('Impresion desactivada','exit'); }
+}
+window.togglePrinting=togglePrinting;
+
+function sidebarGo(panel){
+  const sb=document.getElementById('sidebar');
+  if(!sb.classList.contains('open')){
+    sb.classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('show');
+    document.getElementById('menuBtn').classList.add('open');
+  }
+  const protectedPanels=['rates','trust','reports','closeday','income'];
+  if(protectedPanels.includes(panel)){ pendingSidebarPanel=panel; askUnlock('sidebar'); return; }
+  showSidebarPanel(panel);
+}
+function showSidebarPanel(panel){
+  ['sidebarMain','sidebarRates','sidebarTrust','sidebarReports','sidebarIncome'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  if(panel==='main'){ document.getElementById('sidebarMain').style.display='block'; return; }
+  if(panel==='rates') document.getElementById('sidebarRates').style.display='block';
+  if(panel==='trust'){ updateSidebarTrustPanel(); document.getElementById('sidebarTrust').style.display='block'; }
+  if(panel==='reports'){ renderSidebarReports(); document.getElementById('sidebarReports').style.display='block'; }
+  if(panel==='income'){ renderSidebarIncome(); document.getElementById('sidebarIncome').style.display='block'; }
+  if(panel==='closeday'){ closeSidebar(); openCloseDayModal(); }
+}
+function sidebarBack(){
+  ['sidebarRates','sidebarTrust','sidebarReports','sidebarIncome'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  document.getElementById('sidebarMain').style.display='block';
+}
+window.sidebarGo=sidebarGo; window.sidebarBack=sidebarBack;
+
+function renderSidebarReports(){
+  const el=document.getElementById('sbReportsList');
+  if(reports.length===0){ el.innerHTML='<div style="text-align:center;padding:30px 0;color:rgba(255,255,255,0.2);font-size:0.8rem;">Sin cierres anteriores</div>'; return; }
+  el.innerHTML=reports.map(r=>`<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:8px;">
+    <div style="font-size:0.82rem;font-weight:700;color:#fff;margin-bottom:6px;">📅 ${r.date}</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:0.7rem;color:rgba(255,255,255,0.4);">
+      <span>Entradas: <strong style="color:rgba(255,255,255,0.7)">${r.entries}</strong></span>
+      <span>Salidas: <strong style="color:rgba(255,255,255,0.7)">${r.exits}</strong></span>
+      ${r.pending>0?'<span style="color:#fbbf24">Pendientes: <strong>'+r.pending+'</strong></span>':''}
+      <span>Total: <strong style="color:#34d399">$${r.income}</strong></span>
+    </div></div>`).join('');
+}
+
+function renderSidebarIncome(){
+  const income=history.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  document.getElementById('sbIncomeAmt').textContent='$'+income.toFixed(0);
+  document.getElementById('sbIncomeSub').textContent=history.length+' salida(s) registrada(s)';
+  const autos=history.filter(r=>r.type!=='moto');
+  const motos=history.filter(r=>r.type==='moto');
+  document.getElementById('sbIncomeBreakdown').innerHTML=
+    'Autos: '+autos.length+' · $'+autos.reduce((s,r)=>s+parseFloat(r.total||0),0).toFixed(0)+'<br>'+
+    'Motos: '+motos.length+' · $'+motos.reduce((s,r)=>s+parseFloat(r.total||0),0).toFixed(0);
+}
+
+// ── PASSWORD ──
+function askUnlock(purpose){
+  pwPurpose=purpose;
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').style.display='none';
+  document.getElementById('pwOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+function checkPassword(){
+  if(document.getElementById('pwInput').value===PASSWORD){
+    closePwModal();
+    if(pwPurpose==='sidebar'&&pendingSidebarPanel){ showSidebarPanel(pendingSidebarPanel); pendingSidebarPanel=null; }
+    else if(pwPurpose==='closeday') openCloseDayModal();
+  }else{
+    document.getElementById('pwError').style.display='block';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+function closePwModal(){ document.getElementById('pwOverlay').classList.remove('show'); }
+window.askUnlock=askUnlock; window.checkPassword=checkPassword; window.closePwModal=closePwModal;
+
+// ── TRUST ──
+const TRUSTED_KEY='lumy_trusted_device';
+function updateSidebarTrustPanel(){
+  const trusted=localStorage.getItem(TRUSTED_KEY)==='yes';
+  document.getElementById('sbTrustIcon').textContent=trusted?'✅':'📱';
+  document.getElementById('sbTrustText').textContent=trusted?'Este dispositivo es de confianza':'Este dispositivo NO es de confianza';
+  document.getElementById('sbTrustText').style.color=trusted?'#34d399':'#fff';
+  document.getElementById('sbTrustSub').textContent=trusted?'No se pedira contrasena al abrir':'Se pedira contrasena al abrir la app';
+  const btn=document.getElementById('sbTrustBtn');
+  btn.textContent=trusted?'Quitar confianza':'Marcar como confianza';
+  btn.className='btn-trust-action '+(trusted?'btn-trust-remove':'btn-trust-mark');
+}
+function handleTrust(){
+  const trusted=localStorage.getItem(TRUSTED_KEY)==='yes';
+  if(trusted){ localStorage.removeItem(TRUSTED_KEY); showFlash('Dispositivo ya no es de confianza','exit'); }
+  else{ localStorage.setItem(TRUSTED_KEY,'yes'); showFlash('Dispositivo marcado como confianza','entry'); }
+  updateSidebarTrustPanel();
+}
+window.handleTrust=handleTrust;
+
+// ── VTYPE MODAL ──
+function openVtypeModal(code,plate){
+  pendingCode=code; pendingPlate=plate||null;
+  isModalOpen=true;
+  document.getElementById('vtypeCode').textContent=code;
+  document.getElementById('vtypeOverlay').classList.add('show');
+}
+function closeVtypeModal(){ document.getElementById('vtypeOverlay').classList.remove('show'); pendingCode=null; pendingPlate=null; isModalOpen=false; }
+function confirmVtype(type){
+  const code=pendingCode; const plate=pendingPlate;
+  closeVtypeModal();
+  if(!code){ showFlash('Error: codigo no valido','error'); return; }
+  processEntry(code,type,plate);
+}
+window.closeVtypeModal=closeVtypeModal; window.confirmVtype=confirmVtype;
+
+// ── EXIT CONFIRM ──
+function openExitConfirm(code){
+  if(!active[code]){ showFlash('Vehiculo no encontrado en activos','error'); return; }
+  pendingExitCode=code; isModalOpen=true;
+  const rec=active[code];
+  const elapsedMs=Date.now()-new Date(rec.entry);
+  const typeLabel=rec.type==='moto'?'Moto':'Auto';
+  const est=calcBill(elapsedMs,rec.type||'auto',rec.entry);
+  document.getElementById('exitConfirmCode').textContent=code;
+  document.getElementById('exitConfirmInfo').textContent=typeLabel+' · Entrada: '+rec.entryStr+' · ~$'+est;
+  document.getElementById('exitConfirmOverlay').classList.add('show');
+}
+function closeExitConfirm(){ document.getElementById('exitConfirmOverlay').classList.remove('show'); pendingExitCode=null; isModalOpen=false; }
+function confirmExit(){
+  const code=pendingExitCode; closeExitConfirm();
+  if(!code){ showFlash('Error al marcar salida','error'); return; }
+  processExit(code);
+}
+window.closeExitConfirm=closeExitConfirm; window.confirmExit=confirmExit;
+
+// ── PROCESS ──
+function getNextAvailableCode(){
+  const used=new Set(Object.keys(active).map(k=>parseInt(k)));
+  for(let n=100;n<=220;n++) if(!used.has(n)) return String(n);
+  return null;
+}
+function getNextPlateCode(){
+  const used=new Set(Object.keys(active).map(k=>parseInt(k)));
+  for(let n=1;n<=99;n++) if(!used.has(n)) return String(n).padStart(2,'0');
+  return null;
+}
+function extractPlateFromQR(raw){
+  if(raw.includes('|')){
+    const first=raw.split('|')[0].trim().toUpperCase();
+    if(/^[A-Z0-9]{4,8}$/.test(first)) return first;
+  }
+  return null;
+}
+function isPlateQR(raw){
+  const trimmed=raw.trim().toUpperCase();
+  const asNum=parseInt(trimmed);
+  if(/^\d+$/.test(trimmed)&&asNum>=1&&asNum<=220) return false;
+  if(trimmed.includes('|')) return true;
+  return /^[A-Z]{2,4}\d{2,4}[A-Z]{0,2}$/.test(trimmed);
+}
+
+function processCode(raw){
+  const rawStr=raw.trim();
+  const now=Date.now();
+  if(rawStr===lastScanned&&now-lastScannedTime<3000) return;
+  lastScanned=rawStr; lastScannedTime=now;
+  if(isPlateQR(rawStr)){
+    const plate=extractPlateFromQR(rawStr)||rawStr.split('|')[0].trim().toUpperCase();
+    const existing=Object.entries(active).find(([c,rec])=>rec.plate&&rec.plate.toUpperCase()===plate.toUpperCase());
+    if(existing){ openExitConfirm(existing[0]); }
+    else{
+      const nextCode=getNextPlateCode();
+      if(!nextCode) return showFlash('Codigos 01-99 llenos','error');
+      openVtypeModal(nextCode,plate);
+    }
+  }else{
+    const asNum=parseInt(rawStr);
+    if(isNaN(asNum)||asNum<1||asNum>220) return showFlash('Codigo no reconocido','error');
+    const code=asNum<=99?String(asNum).padStart(2,'0'):String(asNum);
+    if(active[code]){ openExitConfirm(code); }
+    else if(asNum<=99){
+      return showFlash('Codigo '+code+' no esta activo. Solo se asigna al escanear una placa.','error');
+    }
+    else{ openVtypeModal(code,null); }
+  }
+}
+
+function processEntry(code,type,plate){
+  const safeCode=String(code||'').trim();
+  if(!safeCode||safeCode==='null'||safeCode==='undefined'){ showFlash('Error interno: codigo invalido','error'); return; }
+  const now=new Date();
+  if(active[safeCode]){ openExitConfirm(safeCode); return; }
+  active[safeCode]={entry:now,entryStr:formatTime(now),type:type||'auto',...(plate?{plate}:{})};
+  totalEntries++;
+  const typeLabel=(type||'auto')==='moto'?'Moto':'Auto';
+  const rangeLabel=parseInt(safeCode)<100?'Codigo placa':'Ficha';
+  showFlash('Entrada · '+rangeLabel+' '+safeCode+' · '+typeLabel+(plate?' · '+plate:''),'entry');
+  showEntryTicket(safeCode,now,type||'auto',plate||null);
+  printEntry(safeCode,type||'auto',formatTime(now),plate||null);
+  render(); saveState();
+}
+
+function processExit(code){
+  const safeCode=String(code||'').trim();
+  if(!safeCode||!active[safeCode]){ showFlash('Error: vehiculo no encontrado','error'); return; }
+  const rec=active[safeCode];
+  const entry=new Date(rec.entry);
+  const exit=new Date();
+  const elapsedMs=exit-entry;
+  const hoursRaw=elapsedMs/3600000;
+  const type=rec.type||'auto';
+  const total=calcBill(elapsedMs,type,entry);
+  const desc=billingDescription(elapsedMs,type,entry);
+  const record={code:safeCode,type,entryStr:rec.entryStr,exitStr:formatTime(exit),hours:(elapsedMs/3600000).toFixed(2),total,desc};
+  history.unshift(record);
+  delete active[safeCode];
+  showExitTicket(safeCode,type,rec.entryStr,formatTime(exit),hoursRaw,total,desc);
+  printExit(safeCode,type,rec.entryStr,formatTime(exit),formatDuration(hoursRaw),total,desc);
+  render(); saveState();
+}
+
+function processManual(){
+  const val=parseInt(document.getElementById('manualCode').value.trim());
+  if(!val) return;
+  if(val<1||val>220) return showFlash('El codigo debe ser del 01 al 220','error');
+  processCode(String(val));
+  document.getElementById('manualCode').value='';
+}
+window.processManual=processManual;
+
+// ── NOTES ──
+function saveEntryNote(){
+  const note=document.getElementById('entryNoteInput').value.trim();
+  const code=document.getElementById('et-ficha').textContent;
+  if(code&&active[code]){
+    active[code].note=note;
+    if(note) saveState();
+  }
+  document.getElementById('entryNoteInput').value='';
+  document.getElementById('entryScreen').classList.remove('show');
+}
+window.saveEntryNote=saveEntryNote;
+
+function saveNote(code,note){
+  if(!active[code]) return;
+  const trimmed=note.trim();
+  // Solo guardar si realmente cambió
+  if(active[code].note===trimmed) return;
+  active[code].note=trimmed;
+  if(trimmed) saveState();
+}
+window.saveNote=saveNote;
+
+// ── TICKETS ──
+function showEntryTicket(code,now,type,plate){
+  const typeLabel=type==='moto'?'Moto/Mototaxi':'Auto';
+  const isPlateCode=parseInt(code)<100;
+  document.getElementById('et-ficha-label').textContent=isPlateCode?'CODIGO ASIGNADO':'FICHA';
+  document.getElementById('et-ficha').textContent=code;
+  document.getElementById('et-tipo').textContent=typeLabel+(plate?' · Placa: '+plate:'');
+  document.getElementById('et-fecha').textContent=now.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('et-hora').textContent=formatTime(now);
+  document.getElementById('entryNoteInput').value='';
+  const fichaEl=document.getElementById('et-ficha');
+  fichaEl.style.animation='none'; fichaEl.offsetHeight;
+  fichaEl.style.animation='popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+  document.getElementById('entryScreen').classList.add('show');
+}
+function showExitTicket(code,type,entryStr,exitStr,hoursRaw,total,desc){
+  const typeLabel=type==='moto'?'Moto/Mototaxi':'Auto';
+  document.getElementById('xt-ficha').textContent=code;
+  document.getElementById('xt-tipo').textContent=typeLabel;
+  document.getElementById('xt-entrada').textContent=entryStr;
+  document.getElementById('xt-salida').textContent=exitStr;
+  document.getElementById('xt-tiempo').textContent=formatDuration(hoursRaw);
+  document.getElementById('xt-total').textContent='$'+total;
+  document.getElementById('xt-sub').textContent=desc;
+  document.getElementById('exitScreen').classList.add('show');
+}
+function closeTicket(type){ document.getElementById(type==='entry'?'entryScreen':'exitScreen').classList.remove('show'); }
+window.closeTicket=closeTicket;
+
+// ── FLASH ──
+let flashTimer;
+function showFlash(msg,type){
+  const el=document.getElementById('flash');
+  el.innerHTML=msg; el.className=type; el.style.display='block';
+  clearTimeout(flashTimer);
+  flashTimer=setTimeout(()=>el.style.display='none',4000);
+}
+
+// ── RENDER ──
+function render(){ renderGrid(); renderHistory(); renderSummary(); }
+
+function renderGrid(){
+  const grid=document.getElementById('spotsGrid');
+  const count=Object.keys(active).length;
+  document.getElementById('activeCount').textContent=count;
+  if(count===0){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><span class="empty-icon">P</span><div class="empty-text">Sin vehiculos activos</div></div>';
+    return;
+  }
+  grid.innerHTML=Object.entries(active).map(([code,rec])=>{
+    const entry=new Date(rec.entry);
+    const elapsedMs=Date.now()-entry;
+    const elapsed=elapsedMs/3600000;
+    const type=rec.type||'auto';
+    const est=calcBill(elapsedMs,type,entry);
+    const typeLabel=type==='moto'?'MOTO':'AUTO';
+    let nextNote='';
+    if(type==='auto'){
+      const halfHoursCeil=Math.ceil(Math.max(Math.ceil(elapsedMs/60000),1)/30);
+      if(halfHoursCeil===4) nextNote='3a hora gratis a continuacion';
+      if(halfHoursCeil>=10) nextNote='Tarifa maxima alcanzada';
+    }
+    const isPlateCode=parseInt(code)<100;
+    const plateRow=(isPlateCode&&rec.plate)?'<div style="font-size:0.65rem;color:var(--text3);font-weight:700;margin-bottom:2px;">'+rec.plate+'</div>':'';
+    const billingNoteRow=nextNote?'<div class="spot-billing-note">'+nextNote+'</div>':'';
+    const noteInput='<textarea class="spot-note-input" placeholder="Nota (color, senas...)" maxlength="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="nope-'+code+'" onblur="saveNote(\''+code+'\',this.value)" ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation()" rows="2">'+(rec.note||'')+'</textarea>';
+    return '<div class="spot-card">'
+      +'<div class="live-dot"></div>'
+      +'<div class="spot-num">'+code+'</div>'
+      +plateRow
+      +'<span class="spot-type-badge '+type+'">'+typeLabel+'</span>'
+      +'<div class="spot-time">Entrada: '+rec.entryStr+'</div>'
+      +'<div class="spot-elapsed">'+formatDuration(elapsed)+'</div>'
+      +'<div class="spot-est">~$'+est+'</div>'
+      +billingNoteRow
+      +noteInput
+      +'</div>';
+  }).join('');
+}
+
+function renderHistory(){
+  const tbody=document.getElementById('histBody');
+  if(history.length===0){
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><span class="empty-icon">📋</span><div class="empty-text">Sin registros aun</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML=history.map(r=>{
+    const typeLabel=r.type==='moto'?'🏍️':'🚗';
+    return '<tr><td><span class="ficha-num">'+r.code+'</span></td><td>'+typeLabel+'</td><td>'+r.entryStr+'</td><td>'+r.exitStr+'</td><td>'+parseFloat(r.hours).toFixed(2)+'h</td><td><span class="total-chip">$'+r.total+' <span class="paid-badge">✓</span></span></td></tr>';
+  }).join('');
+}
+
+function renderSummary(){
+  document.getElementById('sumActive').textContent=Object.keys(active).length;
+  document.getElementById('sumEntries').textContent=totalEntries;
+  document.getElementById('sumToday').textContent=history.length;
+}
+
+setInterval(()=>{
+  if(!Object.keys(active).length) return;
+  // Solo actualizar tiempo y cobro, sin regenerar el HTML completo
+  Object.entries(active).forEach(([code,rec])=>{
+    const entry=new Date(rec.entry);
+    const elapsedMs=Date.now()-entry;
+    const elapsed=elapsedMs/3600000;
+    const type=rec.type||'auto';
+    const est=calcBill(elapsedMs,type,entry);
+    // Buscar elementos por código sin regenerar toda la tarjeta
+    const cards=document.querySelectorAll('.spot-card');
+    cards.forEach(card=>{
+      const numEl=card.querySelector('.spot-num');
+      if(numEl&&numEl.textContent===code){
+        const elapsedEl=card.querySelector('.spot-elapsed');
+        const estEl=card.querySelector('.spot-est');
+        if(elapsedEl) elapsedEl.textContent=formatDuration(elapsed);
+        if(estEl) estEl.textContent='~$'+est;
+      }
+    });
+  });
+},1000);
+
+// ── CLOSE DAY ──
+function openCloseDayModal(){
+  const income=history.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  const pending=Object.keys(active).length;
+  document.getElementById('mEntries').textContent=totalEntries;
+  document.getElementById('mExits').textContent=history.length;
+  document.getElementById('mActive').textContent=pending;
+  document.getElementById('mIncome').textContent='$'+income.toFixed(0);
+  document.getElementById('modalDate').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('mNote').innerHTML=pending>0
+    ?'<span>Hay '+pending+' vehiculo(s) aun adentro.</span> Quedaran como pendientes en el reporte.'
+    :'Todos los vehiculos han salido. Se guardara el reporte.';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+async function confirmCloseDay(){
+  const income=history.reduce((s,r)=>s+parseFloat(r.total||0),0);
+  const rep={
+    date:new Date().toLocaleDateString('es-MX',{weekday:'short',year:'numeric',month:'short',day:'numeric'}),
+    entries:totalEntries,exits:history.length,income:income.toFixed(0),pending:Object.keys(active).length
+  };
+  reports.unshift(rep); active={}; history=[]; totalEntries=0;
+  closeModal(); render(); await saveState();
+  showFlash('Dia cerrado · $'+income.toFixed(0)+' cobrados · '+rep.exits+' salidas','entry');
+}
+window.openCloseDayModal=openCloseDayModal; window.closeModal=closeModal; window.confirmCloseDay=confirmCloseDay;
+
+// ── SCANNER ──
+function startScanner(){
+  document.getElementById('startBtn').style.display='none';
+  document.getElementById('stopBtn').style.display='inline-block';
+  scanner=new Html5Qrcode("reader");
+  scanner.start({facingMode:"environment"},{
+    fps:15,qrbox:{width:260,height:180},
+    formatsToSupport:[
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.CODE_128,
+      Html5QrcodeSupportedFormats.CODE_39,
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.DATA_MATRIX,
+      Html5QrcodeSupportedFormats.PDF_417
+    ]
+  },text=>processCode(text),()=>{})
+  .catch(err=>{ showFlash('Error al abrir camara: '+err,'error'); stopScanner(); });
+}
+function stopScanner(){
+  if(scanner){ scanner.stop().catch(()=>{}); scanner=null; }
+  document.getElementById('startBtn').style.display='inline-block';
+  document.getElementById('stopBtn').style.display='none';
+}
+window.startScanner=startScanner; window.stopScanner=stopScanner;
+
+// ── HELPERS ──
+function formatTime(d){ return d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function formatDuration(h){
+  const hh=Math.floor(h), mm=Math.round((h-hh)*60);
+  if(hh===0) return mm+' min';
+  return mm>0?hh+'h '+mm+'min':hh+'h';
+}
+
+// ── PRINTING ──
+function isAndroid(){ return /android/i.test(navigator.userAgent); }
+const ESC='\x1B', GS='\x1D';
+const CMD={
+  init:ESC+'@', centerOn:ESC+'a\x01', leftOn:ESC+'a\x00',
+  boldOn:ESC+'E\x01', boldOff:ESC+'E\x00',
+  dblBoth:ESC+'!\x30', normal:ESC+'!\x00',
+  feed:'\n', cut:GS+'V\x41\x03'
+};
+function strToBytes(str){ const a=[]; for(let i=0;i<str.length;i++) a.push(str.charCodeAt(i)&0xFF); return a; }
+function bytesToBase64(bytes){ let b=''; for(const x of bytes) b+=String.fromCharCode(x); return btoa(b); }
+function line(c='-',w=32){ return c.repeat(w); }
+
+function qrESCPOS(text){
+  const store=String.fromCharCode(0x1D,0x28,0x6B,0x03,0x00,0x31,0x43,0x08);
+  const errLvl=String.fromCharCode(0x1D,0x28,0x6B,0x03,0x00,0x31,0x45,0x31);
+  const len=text.length+3, lenL=len&0xFF, lenH=(len>>8)&0xFF;
+  const store2=String.fromCharCode(0x1D,0x28,0x6B,lenL,lenH,0x31,0x50,0x30)+text;
+  const print=String.fromCharCode(0x1D,0x28,0x6B,0x03,0x00,0x31,0x51,0x30);
+  return store+errLvl+store2+print;
+}
+
+function buildEntryTicketESCPOS(code,type,entryStr,plate){
+  const typeLabel=type==='moto'?'MOTO / MOTOTAXI':'AUTOMOVIL';
+  const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'});
+  let d='';
+  // Reducir margen al maximo
+  d+=String.fromCharCode(0x1B,0x33,0x00); // line spacing 0
+  d+=String.fromCharCode(0x1B,0x4A,0x01); // feed minimo
+  d+=CMD.init+CMD.centerOn;
+  d+=CMD.dblBoth+'LUMY-V\n'+CMD.normal;
+  d+='ESTACIONAMIENTO\n'+line()+'\\n';
+  d+=CMD.boldOn+'TICKET DE ENTRADA\n'+CMD.boldOff+line()+'\n';
+  d+=CMD.centerOn+qrESCPOS(String(code))+'\n';
+  d+=CMD.dblBoth+String(code)+'\n'+CMD.normal;
+  d+='FICHA DE ESTACIONAMIENTO\n'+line('-')+'\n';
+  d+=CMD.leftOn;
+  d+='Tipo    : '+typeLabel+'\n';
+  d+='Fecha   : '+fecha+'\n';
+  d+='Entrada : '+entryStr+'\n';
+  if(plate) d+='Placa   : '+plate+'\n';
+  d+=line('-')+'\n';
+  d+=CMD.centerOn;
+  d+='Escanee el QR a la salida\n';
+  d+='Conserve este ticket\n';
+  d+=line('-')+'\n';
+  d+='Tel: 449 894 7691\n';
+  d+='M. Sabino Crespo No. 70\n';
+  d+='Ejutla de Crespo, Oax.\n';
+  d+=line()+'\n'+CMD.feed+CMD.feed+CMD.cut;
+  return d;
+}
+
+function buildOwnerEntryESCPOS(code,type,entryStr,plate){
+  const typeLabel=type==='moto'?'MOTO':'AUTO';
+  const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const isPlateCode=parseInt(code)<100;
+  let d='';
+  d+=CMD.init+CMD.centerOn;
+  d+=CMD.boldOn+'-- COMPROBANTE DUENO --\n'+CMD.boldOff;
+  if(isPlateCode) d+=qrESCPOS(String(code))+'\n';
+  d+=CMD.leftOn;
+  d+='Ficha   : '+code+'\n';
+  d+='Tipo    : '+typeLabel+'\n';
+  d+='Fecha   : '+fecha+'\n';
+  d+='Entrada : '+entryStr+'\n';
+  if(plate) d+='Placa   : '+plate+'\n';
+  d+=line('-')+'\n'+CMD.feed+CMD.cut;
+  return d;
+}
+
+function buildExitTicketESCPOS(code,type,entryStr,exitStr,elapsed,total,desc){
+  const typeLabel=type==='moto'?'MOTO / MOTOTAXI':'AUTOMOVIL';
+  const fecha=new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'});
+  let d='';
+  // Reducir margen superior
+  d+=String.fromCharCode(0x1B,0x4A,0x00); // ESC J 0 - feed mínimo
+  d+=CMD.init+CMD.centerOn;
+  d+=CMD.dblBoth+'LUMY-V\n'+CMD.normal;
+  d+='ESTACIONAMIENTO\n'+line()+'\n';
+  d+=CMD.boldOn+'TICKET DE SALIDA\n'+CMD.boldOff+line()+'\n';
+  d+=CMD.leftOn;
+  d+='Ficha   : '+code+'\n';
+  d+='Tipo    : '+typeLabel+'\n';
+  d+='Fecha   : '+fecha+'\n';
+  d+='Entrada : '+entryStr+'\n';
+  d+='Salida  : '+exitStr+'\n';
+  d+=line('-')+'\n';
+  d+=CMD.centerOn+CMD.boldOn+CMD.dblBoth;
+  d+='TOTAL: $'+total+'\n';
+  d+=CMD.normal+CMD.boldOff+line()+'\n';
+  d+='Gracias por su visita\n';
+  d+=line('-')+'\n';
+  d+='Tel: 449 894 7691\n';
+  d+='M. Sabino Crespo No. 70\n';
+  d+='Ejutla de Crespo, Oax.\n';
+  d+=line()+'\n'+CMD.feed+CMD.feed+CMD.cut;
+  return d;
+}
+
+function printRawBT(escposStr){
+  if(!isAndroid()){ showFlash('Impresion solo en Android con RawBT','exit'); return; }
+  try{
+    const bytes=strToBytes(escposStr);
+    const b64=bytesToBase64(bytes);
+    window.location.href='rawbt:base64,'+b64;
+  }catch(e){ showFlash('Error al imprimir: '+e.message,'error'); }
+}
+
+function printEntry(code,type,entryStr,plate){
+  if(!printingEnabled) return;
+  const isPlateCode=parseInt(code)<100;
+  if(isPlateCode){
+    // Solo ticket del cliente con QR
+    printRawBT(buildEntryTicketESCPOS(code,type,entryStr,plate));
+  }
+  // Fichas 100-220: no imprime nada
+}
+
+function printExit(code,type,entryStr,exitStr,elapsed,total,desc){
+  if(!printingEnabled) return;
+  printRawBT(buildExitTicketESCPOS(code,type,entryStr,exitStr,elapsed,total,desc));
+}
+
+// ── LOGIN ──
+function checkLogin(){
+  const trusted=localStorage.getItem(TRUSTED_KEY)==='yes';
+  const hasSession=sessionStorage.getItem('lumy_session')==='active';
+  if(trusted||hasSession){
+    document.getElementById('loginScreen').classList.add('hidden');
+    loadAll();
+  }else{
+    document.getElementById('loadingOverlay').style.display='none';
+    setTimeout(()=>document.getElementById('loginInput').focus(),100);
+  }
+}
+function doLogin(){
+  const val=document.getElementById('loginInput').value;
+  if(val===PASSWORD){
+    sessionStorage.setItem('lumy_session','active');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('loadingOverlay').style.display='flex';
+    loadAll();
+  }else{
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+window.doLogin=doLogin;
+
+// ── INIT ──
+document.getElementById('manualCode').addEventListener('keydown',e=>{ if(e.key==='Enter') processManual(); });
+document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('pwOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closePwModal(); });
+document.getElementById('vtypeOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeVtypeModal(); });
+document.getElementById('exitConfirmOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeExitConfirm(); });
+
+window.addEventListener('pagehide',()=>{
+  if(localStorage.getItem(TRUSTED_KEY)!=='yes') sessionStorage.removeItem('lumy_session');
+});
+sessionStorage.setItem('lumy_session','active');
+checkLogin();
+
+// Registrar Service Worker para modo offline completo
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js')
+    .then(()=>console.log('Service Worker registrado'))
+    .catch(e=>console.log('SW error:',e));
+}
+</script>
+</body>
+</html>
